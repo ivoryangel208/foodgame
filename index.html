@@ -1,200 +1,157 @@
-import pickle
 import random
+import time
 
-# ----- Player Class ----- 
-class Player:
+class Game:
     def __init__(self):
-        self.level = 1
-        self.money = 100
-        self.fish_caught = []
-        self.crops_grown = []
-        self.tools_owned = []
-        self.npcs_met = []
-        self.inventory = {}
-        self.quest_log = []
+        self.fish_count = 0
+        self.meal_count = 0
+        self.coins = 0
+        self.fishing_level = 1
+        self.crop_count = 0
+        self.locations = ['Home', 'River', 'Town', 'Forest']
+        self.current_location = 0
+        self.fish_types = ['🐟', '🐠', '🐡', '🦈', '🐋', '🎣']
+        self.species = ['Salmon', 'Trout', 'Bass', 'Pike', 'Shark', 'Whale']
+        self.animals = ['Dog', 'Cat', 'Rabbit', 'Horse', 'Cow']
+        self.crops = ['Corn', 'Carrot', 'Tomato', 'Potato', 'Wheat']
+        self.npcs = ['Villager', 'Merchant', 'Farmer', 'Cook', 'Explorer']
 
-    def catch_fish(self, fish):
-        self.fish_caught.append(fish)
-        self.log_action(f"Caught {fish['name']}")
+        # Logging dictionaries
+        self.fish_log = []
+        self.animal_log = []
+        self.crop_log = []
+        self.transaction_log = []
 
-    def grow_crop(self, crop):
-        self.crops_grown.append(crop)
-        self.log_action(f"Grew {crop['name']}")
+    def display_inventory(self):
+        print("\nInventory:")
+        print(f"Fish: {self.fish_count}")
+        print(f"Meals: {self.meal_count}")
+        print(f"Coins: {self.coins}")
+        print(f"Fishing Level: {self.fishing_level}")
+        print(f"Crops: {self.crop_count}")
+        print(f"Location: {self.locations[self.current_location]}")
+        print("-" * 30)
 
-    def log_action(self, action):
-        print(f"Action Logged: {action}")
+    def log_catch(self, fish, weight, length, rarity, price, description, nickname):
+        self.fish_log.append({
+            "Fish": fish,
+            "Weight": weight,
+            "Length": length,
+            "Rarity": rarity,
+            "Price": price,
+            "Description": description,
+            "Nickname": nickname
+        })
+        print(f"{fish} caught! Added to log.")
 
-    def purchase_item(self, item, price):
-        if self.money >= price:
-            self.money -= price
-            self.inventory[item] = self.inventory.get(item, 0) + 1
-            self.log_action(f"Purchased {item} for {price} coins")
-        else:
-            print("Not enough money")
-
-    def sell_item(self, item, quantity, price):
-        if self.inventory.get(item, 0) >= quantity:
-            self.inventory[item] -= quantity
-            return price * quantity
-        else:
-            print("You don't have enough of that item")
-            return 0
-
-# ----- Inventory and Item Management ----- 
-class Inventory:
-    def __init__(self):
-        self.items = {}
-
-    def add_item(self, item, quantity):
-        if item in self.items:
-            self.items[item] += quantity
-        else:
-            self.items[item] = quantity
-
-    def view_inventory(self):
-        return self.items
-
-# ----- Store Class ----- 
-class Store:
-    def __init__(self):
-        self.store_items = {
-            "Fishing Rod": {"price": 50, "type": "Tool"},
-            "Seeds": {"price": 10, "type": "Crop"},
-            "Bait": {"price": 5, "type": "Item"}
-        }
-
-    def show_items(self):
-        return self.store_items
-
-    def sell_item(self, player, item_name):
-        item = self.store_items.get(item_name)
-        if item and player.money >= item['price']:
-            player.purchase_item(item_name, item['price'])
-            return f"Purchased {item_name} for {item['price']} coins"
-        else:
-            return "Not enough coins or item unavailable"
-
-# ----- NPC Class ----- 
-class NPC:
-    def __init__(self, name, quests):
-        self.name = name
-        self.quests = quests
-
-    def give_quest(self, player):
-        if self.quests:
-            quest = self.quests.pop(0)
-            player.quest_log.append(quest)
-            print(f"{self.name} gave you the quest: {quest['description']}")
-            return quest
-        else:
-            print(f"{self.name} has no more quests.")
-            return None
-
-# ----- Farm Class ----- 
-class Farm:
-    def __init__(self):
-        self.seasons = ["Spring", "Summer", "Fall", "Winter"]
-        self.weather_effects = {"Spring": 1.1, "Summer": 1.2, "Fall": 1.0, "Winter": 0.8}
-
-    def plant_crop(self, crop, season):
-        growth_rate = self.weather_effects.get(season, 1)
-        print(f"Planted {crop} in {season}. Growth rate: {growth_rate}")
-        return crop
-
-# ----- Fish and Animal Class ----- 
-class Fish:
-    def __init__(self, name, weight, length, rarity, species, price, description, nickname):
-        self.name = name
-        self.weight = weight
-        self.length = length
-        self.rarity = rarity
-        self.species = species
-        self.price = price
-        self.description = description
-        self.nickname = nickname
-
-# ----- Random Fish Generator ----- 
-def generate_random_fish():
-    fish_names = ["Salmon", "Trout", "Bass", "Catfish", "Perch"]
-    species = ["Freshwater", "Saltwater"]
-    rarities = ["Common", "Uncommon", "Rare", "Epic", "Legendary"]
-    name = random.choice(fish_names)
-    weight = round(random.uniform(1, 10), 2)
-    length = round(random.uniform(20, 100), 2)
-    rarity = random.choice(rarities)
-    species_type = random.choice(species)
-    price = random.randint(10, 500)
-    description = f"A {rarity} {name}. Known for its size and challenge to catch."
-    nickname = f"{name}_#{random.randint(100, 999)}"
-    
-    return Fish(name, weight, length, rarity, species_type, price, description, nickname)
-
-# ----- Saving and Loading Game ----- 
-def save_game(player):
-    with open('savegame.pkl', 'wb') as f:
-        pickle.dump(player, f)
-
-def load_game():
-    try:
-        with open('savegame.pkl', 'rb') as f:
-            return pickle.load(f)
-    except FileNotFoundError:
-        print("No saved game found. Starting fresh.")
-        return Player()
-
-# ----- Game Loop ----- 
-def game_loop():
-    # Initialize game
-    player = load_game()
-    store = Store()
-    farm = Farm()
-
-    print("Welcome to the game!")
-
-    while True:
-        print("\n--- Main Menu ---")
-        print("1. View Inventory")
-        print("2. Catch Fish")
-        print("3. Grow Crops")
-        print("4. Visit Store")
-        print("5. View Quest Log")
-        print("6. Save & Quit")
+    def catch_fish(self):
+        fish = random.choice(self.fish_types)
+        species = random.choice(self.species)
+        weight = round(random.uniform(1, 50), 2)
+        length = round(random.uniform(10, 200), 2)
+        rarity = random.choice(['Common', 'Uncommon', 'Rare', 'Legendary'])
+        price = round(random.uniform(10, 100), 2)
+        description = f"A wild {species} fish."
+        nickname = f"{fish}_{random.randint(1, 100)}"
         
-        choice = input("Choose an option: ")
+        self.fish_count += 1
+        self.log_catch(fish, weight, length, rarity, price, description, nickname)
 
-        if choice == "1":
-            print(player.inventory.view_inventory())
-
-        elif choice == "2":
-            fish = generate_random_fish()
-            player.catch_fish(fish.__dict__)
-            print(f"Caught a {fish.name} - {fish.nickname}")
-
-        elif choice == "3":
-            crop = "Wheat"
-            season = random.choice(farm.seasons)
-            farm.plant_crop(crop, season)
-
-        elif choice == "4":
-            print("Store Items: ")
-            items = store.show_items()
-            for item in items:
-                print(f"{item}: {items[item]['price']} coins")
-            item_to_buy = input("Which item do you want to buy? ")
-            print(store.sell_item(player, item_to_buy))
-
-        elif choice == "5":
-            print("Quest Log:")
-            for quest in player.quest_log:
-                print(quest)
-
-        elif choice == "6":
-            save_game(player)
-            print("Game saved. Exiting.")
-            break
-
+    def cook_food(self):
+        if self.fish_count > 0:
+            self.meal_count += 1
+            self.fish_count -= 1
+            print("You cooked a meal!")
         else:
-            print("Invalid choice. Try again.")
+            print("You need more fish to cook!")
+
+    def sell_food(self):
+        if self.meal_count > 0:
+            self.coins += 5 * self.meal_count
+            self.meal_count = 0
+            self.transaction_log.append(f"Sold meals for {5 * self.meal_count} coins.")
+            print("You sold your meals!")
+        else:
+            print("You have no food to sell!")
+
+    def buy_upgrade(self):
+        if self.coins >= 20:
+            self.coins -= 20
+            self.fishing_level += 1
+            print(f"Your fishing level increased to {self.fishing_level}!")
+        else:
+            print("Not enough coins for an upgrade!")
+
+    def farm_crops(self):
+        crop = random.choice(self.crops)
+        self.crop_count += 1
+        self.crop_log.append(f"Farmed a {crop}.")
+        print(f"You farmed a {crop}!")
+
+    def travel(self):
+        self.current_location = (self.current_location + 1) % len(self.locations)
+        print(f"You traveled to {self.locations[self.current_location]}!")
+
+    def interact_with_npc(self):
+        npc = random.choice(self.npcs)
+        print(f"You interacted with {npc}.")
+
+    def enter_contest(self):
+        if self.meal_count > 0:
+            success = random.choice([True, False])
+            if success:
+                self.coins += 50
+                print("You won the cooking contest! Prize: 50 coins!")
+            else:
+                print("You lost the contest, better luck next time!")
+        else:
+            print("You need a meal to enter the contest!")
+
+    def display_game_log(self):
+        print("\n--- Game Logs ---")
+        print("Fish Catches:")
+        for log in self.fish_log:
+            print(log)
+        print("Animal Catches:")
+        for log in self.animal_log:
+            print(log)
+        print("Crop Harvests:")
+        for log in self.crop_log:
+            print(log)
+        print("Transactions:")
+        for log in self.transaction_log:
+            print(log)
+        print("-" * 30)
+
+    def start(self):
+        while True:
+            self.display_inventory()
+            action = input("\nWhat would you like to do? (Fish, Cook, Sell, Buy Upgrade, Farm, Travel, NPC, Contest, Log, Quit): ").strip().lower()
+
+            if action == "fish":
+                self.catch_fish()
+            elif action == "cook":
+                self.cook_food()
+            elif action == "sell":
+                self.sell_food()
+            elif action == "buy upgrade":
+                self.buy_upgrade()
+            elif action == "farm":
+                self.farm_crops()
+            elif action == "travel":
+                self.travel()
+            elif action == "npc":
+                self.interact_with_npc()
+            elif action == "contest":
+                self.enter_contest()
+            elif action == "log":
+                self.display_game_log()
+            elif action == "quit":
+                print("Thanks for playing!")
+                break
+            else:
+                print("Invalid action. Please try again.")
 
 if __name__ == "__main__":
-    game_loop()
+    game = Game()
+    game.start()
