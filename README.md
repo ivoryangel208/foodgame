@@ -224,7 +224,7 @@
 
     // Event Listeners for making products
     const makeJointButton = document.createElement("button");
-    makeJointButton.textContent = "Make Joint 🌿";
+    makeJointButton.textContent = "Make Joint 🚬";
     makeJointButton.onclick = makeJoint;
     document.getElementById('inventory').appendChild(makeJointButton);
 
@@ -237,7 +237,9 @@
     makeWaxButton.textContent = "Make Wax 🧴";
     makeWaxButton.onclick = makeWax;
     document.getElementById('inventory').appendChild(makeWaxButton);
+
 </script>
 
 </body>
 </html>
+
