@@ -5,12 +5,13 @@ class FishingGame:
         self.fish_count = 0
         self.coins = 0
         self.fishing_level = 1
-        self.fish_types = ['🐟', '🐠', '🐡', '🦈', '🐋', '🐠', '🐡', '🐟', '🐠', '🐟', '🐋', '🐡', '🐟', '🐠', '🐟', '🐠', '🐡', '🐠', '🐟', '🐋', 
-                          '🐡', '🐠', '🐟', '🐟', '🐠', '🐋', '🐠', '🐟', '🐋', '🐠', '🐠', '🐡', '🐟', '🐋', '🐠', '🐠', '🐡', '🐟', '🐋', '🐟']
-        self.species = ['Salmon', 'Trout', 'Bass', 'Pike', 'Shark', 'Whale', 'Cod', 'Mackerel', 'Carp', 'Tuna', 'Swordfish', 'Anglerfish', 'Catfish',
-                        'Marlin', 'Barracuda', 'Swordfish', 'Bluegill', 'Snapper', 'Flounder', 'Grouper', 'Largemouth Bass', 'Goldfish', 'Perch', 'Bream', 
-                        'Sturgeon', 'Eel', 'Kingfish', 'Tilapia', 'Gudgeon', 'Lobster', 'Jellyfish', 'Piranha', 'Lionfish', 'Tetra', 'Clownfish', 'Sardine',
-                        'Piranha', 'Angelfish']
+        self.fish_types = ['🐟', '🐠', '🐡', '🦈', '🐋', '🐠', '🐡', '🐟', '🐠', '🐟', '🐋', '🐡', '🐟', '🐠', '🐟', '🐠', '🐡', '🐠', '🐟', 
+                          '🐋', '🐡', '🐠', '🐟', '🐟', '🐠', '🐋', '🐠', '🐟', '🐋', '🐠', '🐠', '🐡', '🐟', '🐋', '🐠', '🐠', '🐡', '🐟', 
+                          '🐋', '🐟']
+        self.species = ['Salmon', 'Trout', 'Bass', 'Pike', 'Shark', 'Whale', 'Cod', 'Mackerel', 'Carp', 'Tuna', 'Swordfish', 'Anglerfish', 
+                        'Catfish', 'Marlin', 'Barracuda', 'Swordfish', 'Bluegill', 'Snapper', 'Flounder', 'Grouper', 'Largemouth Bass', 'Goldfish', 
+                        'Perch', 'Bream', 'Sturgeon', 'Eel', 'Kingfish', 'Tilapia', 'Gudgeon', 'Lobster', 'Jellyfish', 'Piranha', 'Lionfish', 
+                        'Tetra', 'Clownfish', 'Sardine', 'Piranha', 'Angelfish']
         self.fish_log = []
         self.aquarium = []
         self.store_items = {"Fishing Rod Upgrade": 20, "Bait": 10, "Boat Upgrade": 50}
