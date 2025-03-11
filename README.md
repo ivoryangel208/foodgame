@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Cooking & Fishing Adventure</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weed Empire Tycoon</title>
     <style>
         body {
             text-align: center;
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #2e2e2e;
+            color: white;
         }
         .game-container {
             margin-top: 20px;
@@ -14,170 +17,174 @@
         .button {
             font-size: 18px;
             padding: 10px;
-            margin: 10px;
+            margin: 5px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            transition: transform 0.2s, background-color 0.3s;
         }
-        .inventory, .store, .fish-tank {
+        .button:hover {
+            transform: scale(1.1);
+        }
+        .inventory, .store {
             margin-top: 20px;
             padding: 10px;
-            border: 2px solid black;
-            background: white;
-            font-size: 18px;
-            text-align: left;
+            border: 2px solid white;
+            background: #333;
             width: 300px;
+            text-align: left;
             display: inline-block;
         }
-        .hidden { display: none; }
+        .inventory h3, .store h3 {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <h1>Cooking & Fishing Adventure</h1>
-    <p>Catch fish, grow crops, cook meals, and explore the world!</p>
+
+    <h1>🌿 Weed Empire Tycoon 🌿</h1>
+    <p>Grow, breed, sell, and create the ultimate cannabis empire!</p>
 
     <div class="game-container">
-        <button class="button" onclick="goFishing()">🎣 Fish</button>
-        <button class="button" onclick="cookFood()">🍳 Cook</button>
-        <button class="button" onclick="sellFood()">💰 Sell Food</button>
-        <button class="button" onclick="openStore()">🛒 Open Store</button>
-        <button class="button" onclick="plantCrop()">🌱 Plant Crop</button>
-        <button class="button" onclick="harvestCrops()">🌾 Harvest Crops</button>
-        <button class="button" onclick="openFishTank()">🐟 Fish Tank</button>
+        <button class="button" onclick="growWeed()">🌱 Grow Weed</button>
+        <button class="button" onclick="breedStrains()">💨 Breed Strains</button>
+        <button class="button" onclick="makeProduct()">🍪 Make Edibles/Joints</button>
+        <button class="button" onclick="sellWeed()">💰 Sell Products</button>
+        <button class="button" onclick="buyMoreLand()">🏡 Buy More Land</button>
+        <button class="button" onclick="travel()">✈️ Travel for Rare Strains</button>
+        <button class="button" onclick="visitStore()">🛒 Visit Store</button>
     </div>
 
     <div class="inventory">
         <h3>Inventory</h3>
-        <p>Coins: 💰 <span id="coins">0</span></p>
-        <p>Fishing Level: 🎣 <span id="fishingLevel">1</span></p>
-        <ul id="inventoryList"></ul>
+        <p>Coins: 💰 <span id="coins">100</span></p>
+        <p>Land: 🌾 <span id="land">1</span> plots</p>
+        <p>Weed Strains: 🌿 <span id="weedCount">0</span></p>
+        <ul id="weedList"></ul>
+        <p>Products: 🍪 <span id="products">0</span></p>
     </div>
 
-    <div class="store hidden">
+    <div class="store" id="store" style="display: none;">
         <h3>Store</h3>
-        <button class="button" onclick="buyItem('Rod')">🎣 Buy Better Rod (20 coins)</button>
-        <button class="button" onclick="buyItem('Bait')">🪱 Buy Bait (5 coins)</button>
-        <button class="button" onclick="buyItem('Seeds')">🌱 Buy Seeds (3 coins)</button>
-        <button class="button" onclick="closeStore()">❌ Close</button>
-    </div>
-
-    <div class="fish-tank hidden">
-        <h3>Fish Tank</h3>
-        <ul id="fishTankList"></ul>
-        <button class="button" onclick="closeFishTank()">❌ Close</button>
+        <button class="button" onclick="buyUpgrade()">🛠 Upgrade Grow Gear (50💰)</button>
+        <button class="button" onclick="buySeeds()">🌱 Buy Better Seeds (30💰)</button>
+        <button class="button" onclick="closeStore()">❌ Close Store</button>
     </div>
 
     <script>
-        let fishInventory = [];
-        let mealInventory = [];
-        let cropInventory = [];
-        let fishTank = [];
-        let coins = 0;
-        let fishingLevel = 1;
-        let storeOpen = false;
-        let fishTypes = [
-            { name: "Salmon", rarity: "Common", value: 5 },
-            { name: "Tuna", rarity: "Uncommon", value: 10 },
-            { name: "Golden Koi", rarity: "Rare", value: 20 },
-            { name: "Swordfish", rarity: "Epic", value: 30 }
+        let coins = 100;
+        let land = 1;
+        let weedInventory = [];
+        let productCount = 0;
+
+        const strains = [
+            "OG Kush", "Purple Haze", "Blue Dream", "Sour Diesel", "Pineapple Express",
+            "White Widow", "Gorilla Glue", "Granddaddy Purple", "Gelato", "AK-47"
         ];
-        let recipes = {
-            "Salmon+Tuna": "Grilled Fish Combo",
-            "Tuna+Golden Koi": "Exotic Seafood Platter"
-        };
-        let recipeBook = [];
 
-        function goFishing() {
-            let luckBoost = fishingLevel * 0.05;
-            let fish = fishTypes[Math.floor(Math.random() * fishTypes.length)];
-            if (Math.random() < luckBoost) {
-                fish = fishTypes.find(f => f.rarity === "Rare") || fish;
-            }
-            fishInventory.push(fish);
-            updateInventory();
+        function updateUI() {
+            document.getElementById("coins").textContent = coins;
+            document.getElementById("land").textContent = land;
+            document.getElementById("weedCount").textContent = weedInventory.length;
+            document.getElementById("products").textContent = productCount;
+            document.getElementById("weedList").innerHTML = weedInventory.map(strain => <li>${strain}</li>).join('');
         }
 
-        function cookFood() {
-            if (fishInventory.length >= 2) {
-                let fish1 = fishInventory.pop();
-                let fish2 = fishInventory.pop();
-                let mealName = recipes[fish1.name + "+" + fish2.name] || "Mystery Dish";
-                mealInventory.push({ name: mealName });
-                if (!recipeBook.includes(mealName)) {
-                    recipeBook.push(mealName);
-                    alert(New Recipe Discovered: ${mealName});
-                }
-                updateInventory();
+        function growWeed() {
+            if (weedInventory.length < land * 5) {
+                let newStrain = strains[Math.floor(Math.random() * strains.length)];
+                weedInventory.push(newStrain);
+                alert(You grew some ${newStrain}!);
             } else {
-                alert("You need more fish to cook!");
+                alert("Not enough space! Buy more land.");
             }
+            updateUI();
         }
 
-        function sellFood() {
-            let earnings = mealInventory.length * 10 + cropInventory.length * 5;
+        function breedStrains() {
+            if (weedInventory.length >= 2) {
+                let newStrain = Hybrid-${Math.random().toString(36).substring(7)};
+                weedInventory.push(newStrain);
+                alert(You bred a new strain: ${newStrain}!);
+            } else {
+                alert("You need at least 2 strains to breed.");
+            }
+            updateUI();
+        }
+
+        function makeProduct() {
+            if (weedInventory.length > 0) {
+                weedInventory.pop();
+                productCount++;
+                alert("You created an edible or joint!");
+            } else {
+                alert("You need weed to make products!");
+            }
+            updateUI();
+        }
+
+        function sellWeed() {
+            let earnings = productCount * 20;
             coins += earnings;
-            mealInventory = [];
-            cropInventory = [];
-            updateInventory();
+            productCount = 0;
+            alert(You sold all your products for ${earnings}💰!);
+            updateUI();
         }
 
-        function buyItem(item) {
-            if (item === "Rod" && coins >= 20) {
-                coins -= 20;
-                fishingLevel++;
-                alert("Fishing gear upgraded!");
-            } else if (item === "Bait" && coins >= 5) {
-                coins -= 5;
-                alert("Bait purchased!");
-            } else if (item === "Seeds" && coins >= 3) {
-                coins -= 3;
-                cropInventory.push({ name: "Planted Crop" });
+        function buyMoreLand() {
+            if (coins >= 100) {
+                coins -= 100;
+                land++;
+                alert("You bought more land!");
             } else {
                 alert("Not enough coins!");
             }
-            updateInventory();
+            updateUI();
         }
 
-        function plantCrop() {
-            setTimeout(() => {
-                cropInventory.push({ name: "Harvested Crop" });
-                updateInventory();
-            }, 3000);
-        }
-
-        function harvestCrops() {
-            if (cropInventory.length > 0) {
-                alert("Crops harvested!");
-                updateInventory();
+        function travel() {
+            if (coins >= 50) {
+                coins -= 50;
+                let rareStrain = Rare-${Math.random().toString(36).substring(7)};
+                weedInventory.push(rareStrain);
+                alert(You found a rare strain: ${rareStrain}!);
             } else {
-                alert("No crops to harvest!");
+                alert("Not enough coins to travel!");
             }
+            updateUI();
         }
 
-        function openStore() {
-            document.querySelector(".store").classList.remove("hidden");
+        function visitStore() {
+            document.getElementById("store").style.display = "block";
         }
 
         function closeStore() {
-            document.querySelector(".store").classList.add("hidden");
+            document.getElementById("store").style.display = "none";
         }
 
-        function openFishTank() {
-            document.querySelector(".fish-tank").classList.remove("hidden");
-            document.getElementById("fishTankList").innerHTML = fishInventory.map(f => <li>${f.name} (${f.rarity})</li>).join('');
+        function buyUpgrade() {
+            if (coins >= 50) {
+                coins -= 50;
+                alert("You upgraded your grow gear! More efficient now.");
+            } else {
+                alert("Not enough coins!");
+            }
+            updateUI();
         }
 
-        function closeFishTank() {
-            document.querySelector(".fish-tank").classList.add("hidden");
-        }
-
-        function updateInventory() {
-            document.getElementById('coins').textContent = coins;
-            document.getElementById('fishingLevel').textContent = fishingLevel;
-            document.getElementById('inventoryList').innerHTML = fishInventory.map(f => <li>${f.name} (${f.rarity})</li>).join('');
+        function buySeeds() {
+            if (coins >= 30) {
+                coins -= 30;
+                strains.push(Exotic-${Math.random().toString(36).substring(7)});
+                alert("You bought exotic seeds!");
+            } else {
+                alert("Not enough coins!");
+            }
+            updateUI();
         }
     </script>
+
 </body>
 </html>
-<!DOCTYPE
-
