@@ -1,148 +1,245 @@
-import random
-import time
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weed Empire Tycoon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #2e2e2e;
+            color: white;
+        }
+        .game-container {
+            margin-top: 20px;
+        }
+        .button {
+            font-size: 18px;
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+        .button:hover {
+            transform: scale(1.1);
+        }
+        .inventory, .store, .achievements {
+            margin-top: 20px;
+            padding: 10px;
+            border: 2px solid white;
+            background: #333;
+            width: 300px;
+            text-align: left;
+            display: inline-block;
+        }
+        .inventory h3, .store h3, .achievements h3 {
+            text-align: center;
+        }
+        .weed-detail {
+            margin: 5px 0;
+        }
+        .weather, .location {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌿 Weed Empire Tycoon 🌿</h1>
+    <p>Grow, breed, sell, and create the ultimate cannabis empire!</p>
 
-class Weed:
-    def __init__(self, strain, thc, rarity, country, price):
-        self.strain = strain
-        self.thc = thc
-        self.rarity = rarity
-        self.country = country
-        self.price = price
-        self.weight = 0  # Weight in grams
-    
-    def grow(self, amount):
-        self.weight += amount
-        print(f"You've grown {amount}g of {self.strain} ({self.thc}% THC) from {self.country}. Rarity: {self.rarity}.")
-    
-    def get_details(self):
-        return f"{self.strain} - {self.thc}% THC, Country: {self.country}, Rarity: {self.rarity}, Price: ${self.price} per gram"
+    <div class="game-container">
+        <button class="button" onclick="growWeed()">🌱 Grow Weed</button>
+        <button class="button" onclick="breedStrains()">💨 Breed Strains</button>
+        <button class="button" onclick="makeEdible()">🍪 Make Edibles</button>
+        <button class="button" onclick="makeJoint()">🚬 Make Joints</button>
+        <button class="button" onclick="sellProducts()">💰 Sell Products</button>
+        <button class="button" onclick="buyMoreLand()">🏡 Buy More Land</button>
+        <button class="button" onclick="travel()">✈️ Travel for Rare Strains</button>
+        <button class="button" onclick="visitStore()">🛒 Visit Store</button>
+    </div>
 
-class Product:
-    def __init__(self, strain, type, weight):
-        self.strain = strain
-        self.type = type  # Can be 'joint' or 'edible'
-        self.weight = weight
-        self.thc = strain.thc
-        self.price = strain.price * weight
+    <div class="inventory">
+        <h3>Inventory</h3>
+        <p>Coins: 💰 <span id="coins">100</span></p>
+        <p>Land: 🌾 <span id="land">1</span> plots</p>
+        <p>Weed Weight: 🌿 <span id="weedWeight">0</span> grams</p>
+        <ul id="weedList"></ul>
+        <p>Products: 🍪 <span id="edibles">0</span>, 🚬 <span id="joints">0</span></p>
+    </div>
 
-    def get_details(self):
-        return f"{self.type.capitalize()} made from {self.strain.strain} ({self.thc}% THC). Weight: {self.weight}g. Price: ${self.price}"
+    <div class="store" id="store" style="display: none;">
+        <h3>Store</h3>
+        <button class="button" onclick="buyUpgrade()">🛠 Upgrade Grow Gear (50💰)</button>
+        <button class="button" onclick="buySeeds()">🌱 Buy Better Seeds (30💰)</button>
+        <button class="button" onclick="closeStore()">❌ Close Store</button>
+    </div>
 
-class Compound:
-    def __init__(self, name="My Compound"):
-        self.name = name
-        self.weeds = []
-        self.products = []
-        self.money = 100  # Starting money
-        self.inventory_space = 10
-        self.achievements = []
+    <div class="location">
+        <h3>Location: <span id="location">Home Compound</span></h3>
+        <p id="weather"></p>
+    </div>
 
-    def add_weed(self, weed):
-        if len(self.weeds) < self.inventory_space:
-            self.weeds.append(weed)
-            print(f"Added {weed.strain} to your weed inventory.")
-        else:
-            print("Your inventory is full. Consider selling or using your weed.")
+    <div class="achievements" id="achievements">
+        <h3>Achievements</h3>
+        <ul id="achievementsList"></ul>
+    </div>
 
-    def grow_weed(self):
-        for weed in self.weeds:
-            growth_amount = random.randint(1, 3)  # Grow between 1 and 3 grams of each weed
-            weed.grow(growth_amount)
-    
-    def create_product(self, strain, type, weight):
-        if type == 'edible' and weight == 0.05:  # Each edible is 50mg (0.05g)
-            product = Product(strain, type, weight)
-            self.products.append(product)
-            print(f"Created an edible: {product.get_details()}")
-        elif type == 'joint' and weight == 1:  # Each joint is 1 gram
-            product = Product(strain, type, weight)
-            self.products.append(product)
-            print(f"Created a joint: {product.get_details()}")
+    <script>
+        let coins = 100;
+        let land = 1;
+        let weedInventory = [];
+        let ediblesCount = 0;
+        let jointsCount = 0;
+        let compoundName = "Home Compound";
+        let weather = "Clear skies";
+        let achievements = [];
+        
+        const strains = [
+            {name: "OG Kush", thc: 20, rarity: "Common", origin: "USA", price: 50},
+            {name: "Purple Haze", thc: 22, rarity: "Uncommon", origin: "Netherlands", price: 60},
+            {name: "Blue Dream", thc: 25, rarity: "Rare", origin: "California", price: 70},
+            {name: "Sour Diesel", thc: 30, rarity: "Epic", origin: "USA", price: 80},
+            {name: "Pineapple Express", thc: 28, rarity: "Legendary", origin: "Hawaii", price: 90}
+        ];
 
-    def sell_product(self, product):
-        self.money += product.price
-        self.products.remove(product)
-        print(f"Sold {product.get_details()} for ${product.price}. Current balance: ${self.money}")
+        function updateUI() {
+            document.getElementById("coins").textContent = coins;
+            document.getElementById("land").textContent = land;
+            document.getElementById("weedWeight").textContent = weedInventory.reduce((acc, weed) => acc + weed.weight, 0);
+            document.getElementById("edibles").textContent = ediblesCount;
+            document.getElementById("joints").textContent = jointsCount;
+            document.getElementById("weedList").innerHTML = weedInventory.map(weed => `<li>${weed.name} - ${weed.weight}g - ${weed.thc}% THC</li>`).join('');
+            document.getElementById("achievementsList").innerHTML = achievements.map(ach => `<li>${ach}</li>`).join('');
+            document.getElementById("weather").textContent = weather;
+        }
 
-    def show_inventory(self):
-        print("\nWeed Inventory:")
-        for weed in self.weeds:
-            print(f"  - {weed.get_details()}")
-        print("\nProduct Inventory:")
-        for product in self.products:
-            print(f"  - {product.get_details()}")
-    
-    def show_achievements(self):
-        if not self.achievements:
-            print("No achievements unlocked yet.")
-        else:
-            print("\nAchievements:")
-            for achievement in self.achievements:
-                print(f"  - {achievement}")
-    
-    def unlock_achievement(self, achievement):
-        if achievement not in self.achievements:
-            self.achievements.append(achievement)
-            print(f"Achievement unlocked: {achievement}")
-    
-    def travel(self, location):
-        weather = random.choice(['Sunny', 'Rainy', 'Cloudy'])
-        print(f"Traveling to {location}... The weather is {weather}.")
-        return weather
+        function growWeed() {
+            if (weedInventory.length < land * 5) {
+                let strain = strains[Math.floor(Math.random() * strains.length)];
+                let weight = Math.floor(Math.random() * (5 - 2 + 1)) + 2;  // Random weight between 2 and 5 grams
+                weedInventory.push({...strain, weight: weight});
+                alert(`You grew some ${strain.name} weighing ${weight}g!`);
+                checkAchievement("Grew 1 weed strain");
+            } else {
+                alert("Not enough space! Buy more land.");
+            }
+            updateUI();
+        }
 
-# Sample strain data
-strains = [
-    Weed("OG Kush", 20, "Common", "USA", 10),
-    Weed("Blue Dream", 22, "Rare", "USA", 15),
-    Weed("Pineapple Express", 25, "Legendary", "Hawaii", 20),
-    Weed("Gelato", 28, "Rare", "Italy", 18),
-    Weed("Granddaddy Purple", 30, "Rare", "USA", 22),
-    Weed("Super Lemon Haze", 35, "Legendary", "Netherlands", 25)
-]
+        function breedStrains() {
+            if (weedInventory.length >= 2) {
+                let strain = {name: "Hybrid-" + Math.random().toString(36).substring(7), thc: Math.floor(Math.random() * (40 - 15 + 1)) + 15, rarity: "Rare", origin: "Custom", price: 100, weight: 5};
+                weedInventory.push(strain);
+                alert(`You bred a new strain: ${strain.name}!`);
+                checkAchievement("Bred a new strain");
+            } else {
+                alert("You need at least 2 strains to breed.");
+            }
+            updateUI();
+        }
 
-# Create a compound and start playing
-player_compound = Compound(name="Green Haven")
+        function makeEdible() {
+            if (weedInventory.length > 0) {
+                let weed = weedInventory.pop();
+                ediblesCount++;
+                alert(`You made an edible with ${weed.name} containing ${weed.thc}% THC.`);
+                updateUI();
+            } else {
+                alert("You need weed to make products!");
+            }
+        }
 
-# Add some weeds to the inventory
-player_compound.add_weed(strains[0])
-player_compound.add_weed(strains[2])
+        function makeJoint() {
+            if (weedInventory.length > 0) {
+                let weed = weedInventory.pop();
+                jointsCount++;
+                alert(`You rolled a joint with ${weed.name} containing ${weed.thc}% THC.`);
+                updateUI();
+            } else {
+                alert("You need weed to make products!");
+            }
+        }
 
-# Example gameplay loop
-while player_compound.money > 0:
-    print("\n------------------------------")
-    print(f"Welcome to {player_compound.name}. Current balance: ${player_compound.money}")
-    print("1. Grow weed")
-    print("2. Create product (Edible or Joint)")
-    print("3. Show Inventory")
-    print("4. Sell product")
-    print("5. Travel")
-    print("6. View Achievements")
-    print("0. Quit game")
-    
-    choice = input("Enter your choice: ")
-    
-    if choice == "1":
-        player_compound.grow_weed()
-    elif choice == "2":
-        product_type = input("Enter product type (edible/joint): ").lower()
-        weight = float(input("Enter product weight (edible: 0.05g, joint: 1g): "))
-        strain_choice = int(input(f"Choose strain:\n0. {strains[0].get_details()}\n1. {strains[1].get_details()}\n2. {strains[2].get_details()}\n3. {strains[3].get_details()}\n4. {strains[4].get_details()}\n5. {strains[5].get_details()}\n"))
-        player_compound.create_product(strains[strain_choice], product_type, weight)
-    elif choice == "3":
-        player_compound.show_inventory()
-    elif choice == "4":
-        product_to_sell = int(input("Choose product to sell: "))
-        player_compound.sell_product(player_compound.products[product_to_sell])
-    elif choice == "5":
-        location = input("Enter location to travel to: ")
-        weather = player_compound.travel(location)
-    elif choice == "6":
-        player_compound.show_achievements()
-    elif choice == "0":
-        print("Thanks for playing!")
-        break
-    else:
-        print("Invalid choice. Try again.")
+        function sellProducts() {
+            let earnings = (ediblesCount * 50) + (jointsCount * 40);
+            coins += earnings;
+            ediblesCount = 0;
+            jointsCount = 0;
+            alert(`You sold all your products for ${earnings}💰!`);
+            updateUI();
+        }
 
-    time.sleep(1)
+        function buyMoreLand() {
+            if (coins >= 100) {
+                coins -= 100;
+                land++;
+                alert("You bought more land!");
+                updateUI();
+            } else {
+                alert("Not enough coins!");
+            }
+        }
 
+        function travel() {
+            let locations = ["California", "Hawaii", "Netherlands", "USA"];
+            let newLocation = locations[Math.floor(Math.random() * locations.length)];
+            weather = ["Clear skies", "Rain", "Thunderstorm", "Sunny"][Math.floor(Math.random() * 4)];
+            document.getElementById("location").textContent = newLocation;
+            updateUI();
+        }
+
+        function visitStore() {
+            document.getElementById("store").style.display = "block";
+        }
+
+        function closeStore() {
+            document.getElementById("store").style.display = "none";
+        }
+
+        function buyUpgrade() {
+            if (coins >= 50) {
+                coins -= 50;
+                alert("You upgraded your grow gear!");
+                updateUI();
+            } else {
+                alert("Not enough coins!");
+            }
+        }
+
+        function buySeeds() {
+            if (coins >= 30) {
+                coins -= 30;
+                alert("You bought better seeds!");
+                updateUI();
+            } else {
+                alert("Not enough coins!");
+            }
+        }
+
+        function checkAchievement(achievement) {
+            if (!achievements.includes(achievement)) {
+                achievements.push(achievement);
+            }
+            updateUI();
+        }
+
+        function setCompoundName() {
+            compoundName = prompt("Enter a name for your compound:");
+            alert(`Your compound is now named "${compoundName}".`);
+            updateUI();
+        }
+
+        window.onload = () => {
+            setCompoundName();
+            updateUI();
+        };
+
+    </script>
+</body>
+</html>
