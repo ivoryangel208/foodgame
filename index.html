@@ -10,7 +10,7 @@
             font-family: Arial, sans-serif;
             background-color: #2e2e2e;
             color: white;
-            transition: background 1s;
+            transition: background 1s ease-in-out;
         }
         .game-container {
             margin-top: 20px;
@@ -26,8 +26,8 @@
             color: white;
             transition: transform 0.2s, background-color 0.3s;
         }
-        .button:hover {
-            transform: scale(1.1);
+        .button:active {
+            transform: scale(0.9);
         }
         .inventory, .store {
             margin-top: 20px;
@@ -36,8 +36,16 @@
             background: linear-gradient(to right, #6441A5, #2a0845);
             width: 350px;
             text-align: left;
+            color: white;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
             display: none;
-            color: #fff;
+        }
+        .show {
+            opacity: 1;
+            transform: translateY(0);
+            display: block;
         }
         .store h3 {
             text-align: center;
@@ -54,11 +62,20 @@
             background: rgba(0, 0, 0, 0.5);
             padding: 10px;
             border-radius: 10px;
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
         }
-        .compound-name {
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 10px;
+        .show-location {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .grow-weed {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
@@ -102,31 +119,14 @@
     <div class="location" id="locationName">📍 Home</div>
 
     <script>
-        let coins = localStorage.getItem("coins") ? parseInt(localStorage.getItem("coins")) : 100;
-        let land = localStorage.getItem("land") ? parseInt(localStorage.getItem("land")) : 1;
-        let weedInventory = JSON.parse(localStorage.getItem("weedInventory")) || [];
-        let edibles = localStorage.getItem("edibles") ? parseInt(localStorage.getItem("edibles")) : 0;
-        let joints = localStorage.getItem("joints") ? parseInt(localStorage.getItem("joints")) : 0;
-        let compoundName = localStorage.getItem("compoundName") || "Unnamed";
-
-        document.getElementById("compoundName").textContent = compoundName;
+        let coins = 100, land = 1, weedInventory = [], edibles = 0, joints = 0, compoundName = "Unnamed";
 
         function updateUI() {
             document.getElementById("coins").textContent = coins;
             document.getElementById("land").textContent = land;
-            document.getElementById("weedList").innerHTML = weedInventory.map(strain => `<li>${strain}</li>`).join('');
+            document.getElementById("weedList").innerHTML = weedInventory.map(strain => `<li class="grow-weed">${strain}</li>`).join('');
             document.getElementById("edibles").textContent = edibles;
             document.getElementById("joints").textContent = joints;
-            saveGame();
-        }
-
-        function saveGame() {
-            localStorage.setItem("coins", coins);
-            localStorage.setItem("land", land);
-            localStorage.setItem("weedInventory", JSON.stringify(weedInventory));
-            localStorage.setItem("edibles", edibles);
-            localStorage.setItem("joints", joints);
-            localStorage.setItem("compoundName", compoundName);
         }
 
         function setCompoundName() {
@@ -134,18 +134,17 @@
             if (newName) {
                 compoundName = newName;
                 document.getElementById("compoundName").textContent = newName;
-                saveGame();
             }
         }
 
         function toggleInventory() {
             let inventory = document.querySelector(".inventory");
-            inventory.style.display = (inventory.style.display === "none") ? "block" : "none";
+            inventory.classList.toggle("show");
         }
 
         function toggleStore() {
             let store = document.querySelector(".store");
-            store.style.display = (store.style.display === "none") ? "block" : "none";
+            store.classList.toggle("show");
         }
 
         function growWeed() {
@@ -196,12 +195,13 @@
             let locations = ["California", "Jamaica", "Amsterdam", "Canada"];
             let newLocation = locations[Math.floor(Math.random() * locations.length)];
             document.getElementById("locationName").textContent = `📍 ${newLocation}`;
-            document.body.style.background = ["green", "blue", "purple", "black"][Math.floor(Math.random() * 4)];
+            document.getElementById("locationName").classList.add("show-location");
+
+            let colors = ["green", "blue", "purple", "black"];
+            document.body.style.background = colors[Math.floor(Math.random() * colors.length)];
         }
 
         updateUI();
     </script>
 </body>
 </html>
-
-
