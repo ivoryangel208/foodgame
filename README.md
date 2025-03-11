@@ -78,7 +78,6 @@
 // Game data
 let inventory = [];
 let balance = 100;
-let strainLevel = 10;  // Percentage of THC
 let ownedProperties = [];
 
 // Strains available in the store
