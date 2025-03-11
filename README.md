@@ -1,129 +1,175 @@
-imimport time
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cooking & Fishing Adventure</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            transition: background-color 0.5s;
+        }
+        .game-container {
+            margin-top: 20px;
+        }
+        .button {
+            font-size: 20px;
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+        .button:hover {
+            transform: scale(1.1);
+        }
+        .inventory {
+            margin-top: 20px;
+            padding: 10px;
+            border: 2px solid black;
+            background: white;
+            font-size: 18px;
+            text-align: left;
+            width: 300px;
+        }
+        .inventory-section {
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            background-color: #ddd;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .inventory-content {
+            display: none;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cooking & Fishing Adventure</h1>
+    <p>Catch fish, grow crops, cook meals, and explore the world!</p>
 
-class FishingGame:
-    def __init__(self):
-        # Initialize basic attributes
-        self.fish_count = 0
-        self.coins = 0
-        self.fishing_level = 1
+    <div class="game-container">
+        <button class="button fish-btn" onclick="goFishing(); changeBackground('#2196F3')">🎣 Fish</button>
+        <button class="button cook-btn" onclick="cookFood(); changeBackground('#ff9800')">🍳 Cook</button>
+        <button class="button sell-btn" onclick="sellFood(); changeBackground('#4CAF50')">💰 Sell Food</button>
+        <button class="button buy-btn" onclick="buyUpgrade(); changeBackground('#9C27B0')">🛒 Buy Upgrade</button>
+        <button class="button farm-btn" onclick="plantCrop(); changeBackground('#8BC34A')">🌱 Plant Crop</button>
+        <button class="button harvest-btn" onclick="harvestCrops(); changeBackground('#FFD700')">🌾 Harvest Crops</button>
+        <button class="button travel-btn" onclick="travel(); changeBackground('#FF5722')">🚗 Travel</button>
+    </div>
 
-        # Define available fish types and species
-        self.fish_types = [
-            '🐟', '🐠', '🐡', '🦈', '🐋', '🐠', '🐡', '🐟', '🐠', '🐟',
-            '🐋', '🐡', '🐟', '🐠', '🐟', '🐠', '🐡', '🐠', '🐟', '🐋',
-            '🐡', '🐠', '🐟', '🐟', '🐠', '🐋', '🐠', '🐟', '🐋', '🐠',
-            '🐠', '🐡', '🐟', '🐋', '🐠', '🐠', '🐡', '🐟', '🐋', '🐟'
-        ]
+    <div class="inventory">
+        <h3>Inventory</h3>
+        <p>Coins: 💰 <span id="coins">0</span></p>
+        <p>Fishing Level: 🎣 <span id="fishingLevel">1</span></p>
+        
+        <div class="inventory-section" onclick="toggleInventory('fishContent')">Fish Caught</div>
+        <div id="fishContent" class="inventory-content">
+            <ul id="fishList"></ul>
+        </div>
 
-        self.species = [
-            'Salmon', 'Trout', 'Bass', 'Pike', 'Shark', 'Whale', 'Cod',
-            'Mackerel', 'Carp', 'Tuna', 'Swordfish', 'Anglerfish', 'Catfish',
-            'Marlin', 'Barracuda', 'Swordfish', 'Bluegill', 'Snapper', 'Flounder',
-            'Grouper', 'Largemouth Bass', 'Goldfish', 'Perch', 'Bream', 'Sturgeon',
-            'Eel', 'Kingfish', 'Tilapia', 'Gudgeon', 'Lobster', 'Jellyfish',
-            'Piranha', 'Lionfish', 'Tetra', 'Clownfish', 'Sardine', 'Piranha',
-            'Angelfish'
-        ]
+        <div class="inventory-section" onclick="toggleInventory('mealContent')">Meals Cooked</div>
+        <div id="mealContent" class="inventory-content">
+            <ul id="mealList"></ul>
+        </div>
 
-        # Fish log to track catches
-        self.fish_log = []
+        <div class="inventory-section" onclick="toggleInventory('cropContent')">Crops Harvested</div>
+        <div id="cropContent" class="inventory-content">
+            <ul id="cropList"></ul>
+        </div>
+    </div>
 
-        # Aquarium to store fish
-        self.aquarium = []
+    <script>
+        let fishInventory = [];
+        let mealInventory = [];
+        let cropInventory = [];
+        let coins = 0;
+        let fishingLevel = 1;
 
-        # Store items for upgrading or purchasing
-        self.store_items = {
-            "Fishing Rod Upgrade": 20,
-            "Bait": 10,
-            "Boat Upgrade": 50
+        function changeBackground(color) {
+            document.body.style.backgroundColor = color;
         }
 
-    def custom_random(self, limit):
-        """ Generate a pseudo-random number using current time for simplicity. """
-        current_time = int(time.time() * 1000)  # Current time in milliseconds
-        return current_time % limit
-
-    def catch_fish(self):
-        """ Catch a random fish and store the information. """
-        fish_index = self.custom_random(len(self.fish_types))  # Random index for fish
-        fish = self.fish_types[fish_index]
-        species = self.species[fish_index]
-
-        # Randomly generate weight, length, rarity, and price for the fish
-        weight = self.custom_random(100) + 1  # Weight between 1-100 pounds
-        length = self.custom_random(72) + 12  # Length between 12-72 inches
-        rarity = ["Common", "Uncommon", "Rare", "Legendary"][self.custom_random(4)]  # Random rarity
-        price = self.custom_random(100) + 10  # Price between 10-100 coins
-
-        fish_info = {
-            'Fish': fish,
-            'Species': species,
-            'Weight': weight,
-            'Length': length,
-            'Rarity': rarity,
-            'Price': price
+        function goFishing() {
+            let fishTypes = [
+                { name: "Salmon", weight: "5 lbs", length: "24 inches", rarity: "Common", description: "A fresh wild salmon." },
+                { name: "Tuna", weight: "10 lbs", length: "40 inches", rarity: "Uncommon", description: "A powerful deep-sea fish." },
+                { name: "Golden Koi", weight: "2 lbs", length: "14 inches", rarity: "Rare", description: "A stunning, valuable fish." },
+                { name: "Swordfish", weight: "20 lbs", length: "60 inches", rarity: "Epic", description: "A mighty ocean predator." }
+            ];
+            let caughtFish = fishTypes[Math.floor(Math.random() * fishTypes.length)];
+            fishInventory.push(caughtFish);
+            updateInventory();
         }
 
-        # Add fish to log and aquarium
-        self.fish_log.append(fish_info)
-        self.aquarium.append(fish_info)
+        function cookFood() {
+            if (fishInventory.length > 0) {
+                let meal = { name: "Grilled Fish", description: "A delicious grilled fish." };
+                mealInventory.push(meal);
+                fishInventory.pop();
+                updateInventory();
+            } else {
+                alert("You need more fish to cook!");
+            }
+        }
 
-        # Update fish count and coins
-        self.fish_count += 1
-        self.coins += price
+        function sellFood() {
+            let earnings = mealInventory.length * 5 + cropInventory.length * 3;
+            coins += earnings;
+            mealInventory = [];
+            cropInventory = [];
+            updateInventory();
+        }
 
-        # Return the fish details
-        return fish_info
+        function buyUpgrade() {
+            if (coins >= 20) {
+                coins -= 20;
+                fishingLevel++;
+                alert("You upgraded your fishing gear! Catch more fish!");
+                updateInventory();
+            } else {
+                alert("Not enough coins for an upgrade!");
+            }
+        }
 
-    def view_fish_log(self):
-        """ View all the catches made. """
-        return self.fish_log
+        function plantCrop() {
+            setTimeout(() => {
+                let crop = { name: "Carrot", description: "A fresh organic carrot." };
+                cropInventory.push(crop);
+                alert("Your crops are ready to harvest!");
+                updateInventory();
+            }, 5000);
+        }
 
-    def view_aquarium(self):
-        """ View all fish currently in the aquarium. """
-        return self.aquarium
+        function harvestCrops() {
+            if (cropInventory.length > 0) {
+                alert("You harvested your crops!");
+                updateInventory();
+            } else {
+                alert("No crops to harvest!");
+            }
+        }
 
-    def purchase_item(self, item):
-        """ Attempt to purchase an item from the store. """
-        if item in self.store_items:
-            if self.coins >= self.store_items[item]:
-                self.coins -= self.store_items[item]
-                return f"You have purchased {item}!"
-            else:
-                return "Not enough coins to make this purchase!"
-        else:
-            return f"{item} is not available in the store."
+        function travel() {
+            alert("You traveled to a new location!");
+        }
 
-    def upgrade_fishing_rod(self):
-        """ Upgrade the fishing rod if enough coins are available. """
-        if self.coins >= 20:
-            self.coins -= 20
-            self.fishing_level += 1
-            return "Fishing rod upgraded!"
-        else:
-            return "Not enough coins for an upgrade!"
+        function toggleInventory(id) {
+            let element = document.getElementById(id);
+            element.style.display = element.style.display === "block" ? "none" : "block";
+        }
 
-# Example usage
-if __name__ == "__main__":
-    # Create an instance of the game
-    game = FishingGame()
+        function updateInventory() {
+            document.getElementById('coins').textContent = coins;
+            document.getElementById('fishingLevel').textContent = fishingLevel;
+            document.getElementById('fishList').innerHTML = fishInventory.map(f => `<li>${f.name} (${f.rarity}) - ${f.weight}, ${f.length}: ${f.description}</li>`).join('');
+            document.getElementById('mealList').innerHTML = mealInventory.map(m => `<li>${m.name}: ${m.description}</li>`).join('');
+            document.getElementById('cropList').innerHTML = cropInventory.map(c => `<li>${c.name}: ${c.description}</li>`).join('');
+        }
+    </script>
+</body>
+</html>
 
-    # Catch some fish
-    fish1 = game.catch_fish()
-    fish2 = game.catch_fish()
-
-    # View the log of catches
-    print("Fish Log:")
-    for entry in game.view_fish_log():
-        print(entry)
-
-    # View aquarium contents
-    print("\nAquarium:")
-    for fish in game.view_aquarium():
-        print(fish)
-
-    # Purchase an item from the store
-    print(game.purchase_item("Fishing Rod Upgrade"))
-
-    # Upgrade the fishing rod
-    print(game.upgrade_fishing_rod())
