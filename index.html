@@ -1,200 +1,200 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cooking & Fishing Adventure</title>
-    <style>
-        body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            transition: background-color 0.5s;
-        }
-        .game-container {
-            margin-top: 20px;
-        }
-        .button {
-            font-size: 20px;
-            padding: 10px;
-            margin: 10px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-        .inventory, .index {
-            margin-top: 20px;
-            padding: 10px;
-            border: 2px solid black;
-            display: inline-block;
-            background: white;
-            font-size: 18px;
-            text-align: left;
-        }
-    </style>
-</head>
-<body>
-    <h1>Cooking & Fishing Adventure</h1>
-    <p>Catch fish, grow crops, cook meals, and explore the world!</p>
+import pickle
+import random
 
-    <div class="game-container">
-        <button class="button fish-btn" onclick="goFishing(); changeBackground('#2196F3')">🎣 Fish</button>
-        <button class="button cook-btn" onclick="cookFood(); changeBackground('#ff9800')">🍳 Cook</button>
-        <button class="button sell-btn" onclick="sellFood(); changeBackground('#4CAF50')">💰 Sell Food</button>
-        <button class="button buy-btn" onclick="buyUpgrade(); changeBackground('#9C27B0')">🛒 Buy Upgrade</button>
-        <button class="button farm-btn" onclick="farmCrops(); changeBackground('#8BC34A')">🌾 Farm</button>
-        <button class="button travel-btn" onclick="travel(); changeBackground('#FF5722')">🚗 Travel</button>
-        <button class="button quest-btn" onclick="startQuest(); changeBackground('#795548')">🏡 Quest</button>
-        <button class="button contest-btn" onclick="enterContest(); changeBackground('#FFC107')">🏆 Enter Cooking Contest</button>
-    </div>
+# ----- Player Class ----- 
+class Player:
+    def __init__(self):
+        self.level = 1
+        self.money = 100
+        self.fish_caught = []
+        self.crops_grown = []
+        self.tools_owned = []
+        self.npcs_met = []
+        self.inventory = {}
+        self.quest_log = []
 
-    <div class="inventory">
-        <h3>Inventory</h3>
-        <p>Fish: <span id="fishCount">0</span></p>
-        <p>Meals: <span id="mealCount">0</span></p>
-        <p>Coins: 💰 <span id="coins">0</span></p>
-        <p>Fishing Level: 🎣 <span id="fishingLevel">1</span></p>
-        <p>Crops: 🌾 <span id="cropCount">0</span></p>
-        <p>Travel Location: <span id="locations">Home</span></p>
-        <p id="fishDetails"> </p> <!-- Added for displaying details of fish caught -->
-    </div>
+    def catch_fish(self, fish):
+        self.fish_caught.append(fish)
+        self.log_action(f"Caught {fish['name']}")
 
-    <div class="index">
-        <h3>Game Index</h3>
-        <p><strong>Tools:</strong> Basic Rod, Advanced Rod, Cooking Pot, Farming Tools</p>
-        <p><strong>Meals:</strong> Grilled Fish, Fish Soup, Sushi, Fried Rice</p>
-        <p><strong>Food:</strong> Fish, Crops, Spices</p>
-        <p><strong>Cars:</strong> Bike, Old Truck, Speedboat</p>
-        <p><strong>Upgrades:</strong> Better Fishing Gear, Farm Expansion, Cooking Equipment</p>
-    </div>
+    def grow_crop(self, crop):
+        self.crops_grown.append(crop)
+        self.log_action(f"Grew {crop['name']}")
 
-    <script>
-        // Randomized fish/animal attributes
-        let speciesList = ['Bass', 'Trout', 'Salmon', 'Shark', 'Whale'];
-        let rarityList = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'];
-        let weightList = ['1kg', '2kg', '3kg', '500kg', '1000kg'];
-        let lengthList = ['30cm', '50cm', '60cm', '4m', '15m'];
-        let priceList = [5, 10, 15, 25, 100];
-        let descriptionList = [
-            'A common freshwater fish.',
-            'A popular fish known for its delicious taste.',
-            'A fish prized for its rich flavor and pink meat.',
-            'A massive predator of the seas.',
-            'The giant of the oceans.'
-        ];
-        let nicknamesList = ['Finn', 'Splash', 'Bubbles', 'Jaws', 'Whaley'];
+    def log_action(self, action):
+        print(f"Action Logged: {action}")
 
-        let fishCount = 0;
-        let mealCount = 0;
-        let coins = 0;
-        let fishingLevel = 1;
-        let cropCount = 0;
-        let currentLocation = 0;
+    def purchase_item(self, item, price):
+        if self.money >= price:
+            self.money -= price
+            self.inventory[item] = self.inventory.get(item, 0) + 1
+            self.log_action(f"Purchased {item} for {price} coins")
+        else:
+            print("Not enough money")
 
-        function changeBackground(color) {
-            document.body.style.backgroundColor = color;
+    def sell_item(self, item, quantity, price):
+        if self.inventory.get(item, 0) >= quantity:
+            self.inventory[item] -= quantity
+            return price * quantity
+        else:
+            print("You don't have enough of that item")
+            return 0
+
+# ----- Inventory and Item Management ----- 
+class Inventory:
+    def __init__(self):
+        self.items = {}
+
+    def add_item(self, item, quantity):
+        if item in self.items:
+            self.items[item] += quantity
+        else:
+            self.items[item] = quantity
+
+    def view_inventory(self):
+        return self.items
+
+# ----- Store Class ----- 
+class Store:
+    def __init__(self):
+        self.store_items = {
+            "Fishing Rod": {"price": 50, "type": "Tool"},
+            "Seeds": {"price": 10, "type": "Crop"},
+            "Bait": {"price": 5, "type": "Item"}
         }
 
-        function randomizeAttributes() {
-            let species = speciesList[Math.floor(Math.random() * speciesList.length)];
-            let rarity = rarityList[Math.floor(Math.random() * rarityList.length)];
-            let weight = weightList[Math.floor(Math.random() * weightList.length)];
-            let length = lengthList[Math.floor(Math.random() * lengthList.length)];
-            let price = priceList[Math.floor(Math.random() * priceList.length)];
-            let description = descriptionList[Math.floor(Math.random() * descriptionList.length)];
-            let nickname = nicknamesList[Math.floor(Math.random() * nicknamesList.length)];
+    def show_items(self):
+        return self.store_items
 
-            return {
-                species: species,
-                rarity: rarity,
-                weight: weight,
-                length: length,
-                price: price,
-                description: description,
-                nickname: nickname
-            };
-        }
+    def sell_item(self, player, item_name):
+        item = self.store_items.get(item_name)
+        if item and player.money >= item['price']:
+            player.purchase_item(item_name, item['price'])
+            return f"Purchased {item_name} for {item['price']} coins"
+        else:
+            return "Not enough coins or item unavailable"
 
-        function goFishing() {
-            let newFish = randomizeAttributes();
-            fishCount += fishingLevel;
-            document.getElementById('fishCount').textContent = fishCount;
-            
-            // Displaying the details of the fish caught
-            document.getElementById('fishDetails').innerHTML = `
-                <strong>Fish Caught:</strong> ${newFish.species} (${newFish.nickname})<br>
-                <strong>Weight:</strong> ${newFish.weight}<br>
-                <strong>Length:</strong> ${newFish.length}<br>
-                <strong>Rarity:</strong> ${newFish.rarity}<br>
-                <strong>Price:</strong> 💰${newFish.price}<br>
-                <strong>Description:</strong> ${newFish.description}
-            `;
-        }
+# ----- NPC Class ----- 
+class NPC:
+    def __init__(self, name, quests):
+        self.name = name
+        self.quests = quests
 
-        function cookFood() {
-            if (fishCount > 0) {
-                mealCount++;
-                fishCount--;
-                document.getElementById('fishCount').textContent = fishCount;
-                document.getElementById('mealCount').textContent = mealCount;
-            } else {
-                alert("You need more fish to cook!");
-            }
-        }
+    def give_quest(self, player):
+        if self.quests:
+            quest = self.quests.pop(0)
+            player.quest_log.append(quest)
+            print(f"{self.name} gave you the quest: {quest['description']}")
+            return quest
+        else:
+            print(f"{self.name} has no more quests.")
+            return None
 
-        function sellFood() {
-            if (mealCount > 0) {
-                coins += 5 * mealCount;
-                mealCount = 0;
-                document.getElementById('coins').textContent = coins;
-                document.getElementById('mealCount').textContent = mealCount;
-            } else {
-                alert("You have no food to sell!");
-            }
-        }
+# ----- Farm Class ----- 
+class Farm:
+    def __init__(self):
+        self.seasons = ["Spring", "Summer", "Fall", "Winter"]
+        self.weather_effects = {"Spring": 1.1, "Summer": 1.2, "Fall": 1.0, "Winter": 0.8}
 
-        function buyUpgrade() {
-            if (coins >= 20) {
-                coins -= 20;
-                fishingLevel++;
-                document.getElementById('coins').textContent = coins;
-                document.getElementById('fishingLevel').textContent = fishingLevel;
-                alert("You upgraded your fishing gear! Catch more fish!");
-            } else {
-                alert("Not enough coins for an upgrade!");
-            }
-        }
+    def plant_crop(self, crop, season):
+        growth_rate = self.weather_effects.get(season, 1)
+        print(f"Planted {crop} in {season}. Growth rate: {growth_rate}")
+        return crop
 
-        function farmCrops() {
-            cropCount++;
-            document.getElementById('cropCount').textContent = cropCount;
-        }
+# ----- Fish and Animal Class ----- 
+class Fish:
+    def __init__(self, name, weight, length, rarity, species, price, description, nickname):
+        self.name = name
+        self.weight = weight
+        self.length = length
+        self.rarity = rarity
+        self.species = species
+        self.price = price
+        self.description = description
+        self.nickname = nickname
 
-        function travel() {
-            currentLocation = (currentLocation + 1) % ['Home', 'River', 'Town', 'Forest'].length;
-            document.getElementById('locations').textContent = ['Home', 'River', 'Town', 'Forest'][currentLocation];
-            alert("You traveled to " + ['Home', 'River', 'Town', 'Forest'][currentLocation] + "!");
-        }
+# ----- Random Fish Generator ----- 
+def generate_random_fish():
+    fish_names = ["Salmon", "Trout", "Bass", "Catfish", "Perch"]
+    species = ["Freshwater", "Saltwater"]
+    rarities = ["Common", "Uncommon", "Rare", "Epic", "Legendary"]
+    name = random.choice(fish_names)
+    weight = round(random.uniform(1, 10), 2)
+    length = round(random.uniform(20, 100), 2)
+    rarity = random.choice(rarities)
+    species_type = random.choice(species)
+    price = random.randint(10, 500)
+    description = f"A {rarity} {name}. Known for its size and challenge to catch."
+    nickname = f"{name}_#{random.randint(100, 999)}"
+    
+    return Fish(name, weight, length, rarity, species_type, price, description, nickname)
 
-        function startQuest() {
-            alert("A villager asks you to bring them a rare fish! Complete the quest for rewards!");
-        }
+# ----- Saving and Loading Game ----- 
+def save_game(player):
+    with open('savegame.pkl', 'wb') as f:
+        pickle.dump(player, f)
 
-        function enterContest() {
-            if (mealCount > 0) {
-                let success = Math.random() > 0.5;
-                if (success) {
-                    coins += 50;
-                    alert("You won the cooking contest! Prize: 50 coins!");
-                } else {
-                    alert("You lost the contest, better luck next time!");
-                }
-                document.getElementById('coins').textContent = coins;
-            } else {
-                alert("You need a meal to enter the contest!");
-            }
-        }
-    </script>
-</body>
-</html>
+def load_game():
+    try:
+        with open('savegame.pkl', 'rb') as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        print("No saved game found. Starting fresh.")
+        return Player()
 
+# ----- Game Loop ----- 
+def game_loop():
+    # Initialize game
+    player = load_game()
+    store = Store()
+    farm = Farm()
+
+    print("Welcome to the game!")
+
+    while True:
+        print("\n--- Main Menu ---")
+        print("1. View Inventory")
+        print("2. Catch Fish")
+        print("3. Grow Crops")
+        print("4. Visit Store")
+        print("5. View Quest Log")
+        print("6. Save & Quit")
+        
+        choice = input("Choose an option: ")
+
+        if choice == "1":
+            print(player.inventory.view_inventory())
+
+        elif choice == "2":
+            fish = generate_random_fish()
+            player.catch_fish(fish.__dict__)
+            print(f"Caught a {fish.name} - {fish.nickname}")
+
+        elif choice == "3":
+            crop = "Wheat"
+            season = random.choice(farm.seasons)
+            farm.plant_crop(crop, season)
+
+        elif choice == "4":
+            print("Store Items: ")
+            items = store.show_items()
+            for item in items:
+                print(f"{item}: {items[item]['price']} coins")
+            item_to_buy = input("Which item do you want to buy? ")
+            print(store.sell_item(player, item_to_buy))
+
+        elif choice == "5":
+            print("Quest Log:")
+            for quest in player.quest_log:
+                print(quest)
+
+        elif choice == "6":
+            save_game(player)
+            print("Game saved. Exiting.")
+            break
+
+        else:
+            print("Invalid choice. Try again.")
+
+if __name__ == "__main__":
+    game_loop()
