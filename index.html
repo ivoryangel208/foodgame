@@ -7,24 +7,19 @@
             text-align: center;
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            transition: background-color 0.5s;
         }
         .game-container {
             margin-top: 20px;
         }
         .button {
-            font-size: 20px;
+            font-size: 18px;
             padding: 10px;
             margin: 10px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            transition: transform 0.2s, background-color 0.3s;
         }
-        .button:hover {
-            transform: scale(1.1);
-        }
-        .inventory {
+        .inventory, .store, .fish-tank {
             margin-top: 20px;
             padding: 10px;
             border: 2px solid black;
@@ -32,19 +27,9 @@
             font-size: 18px;
             text-align: left;
             width: 300px;
+            display: inline-block;
         }
-        .inventory-section {
-            margin-top: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            background-color: #ddd;
-            padding: 5px;
-            border-radius: 5px;
-        }
-        .inventory-content {
-            display: none;
-            padding-left: 10px;
-        }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -52,64 +37,76 @@
     <p>Catch fish, grow crops, cook meals, and explore the world!</p>
 
     <div class="game-container">
-        <button class="button fish-btn" onclick="goFishing(); changeBackground('#2196F3')">🎣 Fish</button>
-        <button class="button cook-btn" onclick="cookFood(); changeBackground('#ff9800')">🍳 Cook</button>
-        <button class="button sell-btn" onclick="sellFood(); changeBackground('#4CAF50')">💰 Sell Food</button>
-        <button class="button buy-btn" onclick="buyUpgrade(); changeBackground('#9C27B0')">🛒 Buy Upgrade</button>
-        <button class="button farm-btn" onclick="plantCrop(); changeBackground('#8BC34A')">🌱 Plant Crop</button>
-        <button class="button harvest-btn" onclick="harvestCrops(); changeBackground('#FFD700')">🌾 Harvest Crops</button>
-        <button class="button travel-btn" onclick="travel(); changeBackground('#FF5722')">🚗 Travel</button>
+        <button class="button" onclick="goFishing()">🎣 Fish</button>
+        <button class="button" onclick="cookFood()">🍳 Cook</button>
+        <button class="button" onclick="sellFood()">💰 Sell Food</button>
+        <button class="button" onclick="openStore()">🛒 Open Store</button>
+        <button class="button" onclick="plantCrop()">🌱 Plant Crop</button>
+        <button class="button" onclick="harvestCrops()">🌾 Harvest Crops</button>
+        <button class="button" onclick="openFishTank()">🐟 Fish Tank</button>
     </div>
 
     <div class="inventory">
         <h3>Inventory</h3>
         <p>Coins: 💰 <span id="coins">0</span></p>
         <p>Fishing Level: 🎣 <span id="fishingLevel">1</span></p>
-        
-        <div class="inventory-section" onclick="toggleInventory('fishContent')">Fish Caught</div>
-        <div id="fishContent" class="inventory-content">
-            <ul id="fishList"></ul>
-        </div>
+        <ul id="inventoryList"></ul>
+    </div>
 
-        <div class="inventory-section" onclick="toggleInventory('mealContent')">Meals Cooked</div>
-        <div id="mealContent" class="inventory-content">
-            <ul id="mealList"></ul>
-        </div>
+    <div class="store hidden">
+        <h3>Store</h3>
+        <button class="button" onclick="buyItem('Rod')">🎣 Buy Better Rod (20 coins)</button>
+        <button class="button" onclick="buyItem('Bait')">🪱 Buy Bait (5 coins)</button>
+        <button class="button" onclick="buyItem('Seeds')">🌱 Buy Seeds (3 coins)</button>
+        <button class="button" onclick="closeStore()">❌ Close</button>
+    </div>
 
-        <div class="inventory-section" onclick="toggleInventory('cropContent')">Crops Harvested</div>
-        <div id="cropContent" class="inventory-content">
-            <ul id="cropList"></ul>
-        </div>
+    <div class="fish-tank hidden">
+        <h3>Fish Tank</h3>
+        <ul id="fishTankList"></ul>
+        <button class="button" onclick="closeFishTank()">❌ Close</button>
     </div>
 
     <script>
         let fishInventory = [];
         let mealInventory = [];
         let cropInventory = [];
+        let fishTank = [];
         let coins = 0;
         let fishingLevel = 1;
-
-        function changeBackground(color) {
-            document.body.style.backgroundColor = color;
-        }
+        let storeOpen = false;
+        let fishTypes = [
+            { name: "Salmon", rarity: "Common", value: 5 },
+            { name: "Tuna", rarity: "Uncommon", value: 10 },
+            { name: "Golden Koi", rarity: "Rare", value: 20 },
+            { name: "Swordfish", rarity: "Epic", value: 30 }
+        ];
+        let recipes = {
+            "Salmon+Tuna": "Grilled Fish Combo",
+            "Tuna+Golden Koi": "Exotic Seafood Platter"
+        };
+        let recipeBook = [];
 
         function goFishing() {
-            let fishTypes = [
-                { name: "Salmon", weight: "5 lbs", length: "24 inches", rarity: "Common", description: "A fresh wild salmon." },
-                { name: "Tuna", weight: "10 lbs", length: "40 inches", rarity: "Uncommon", description: "A powerful deep-sea fish." },
-                { name: "Golden Koi", weight: "2 lbs", length: "14 inches", rarity: "Rare", description: "A stunning, valuable fish." },
-                { name: "Swordfish", weight: "20 lbs", length: "60 inches", rarity: "Epic", description: "A mighty ocean predator." }
-            ];
-            let caughtFish = fishTypes[Math.floor(Math.random() * fishTypes.length)];
-            fishInventory.push(caughtFish);
+            let luckBoost = fishingLevel * 0.05;
+            let fish = fishTypes[Math.floor(Math.random() * fishTypes.length)];
+            if (Math.random() < luckBoost) {
+                fish = fishTypes.find(f => f.rarity === "Rare") || fish;
+            }
+            fishInventory.push(fish);
             updateInventory();
         }
 
         function cookFood() {
-            if (fishInventory.length > 0) {
-                let meal = { name: "Grilled Fish", description: "A delicious grilled fish." };
-                mealInventory.push(meal);
-                fishInventory.pop();
+            if (fishInventory.length >= 2) {
+                let fish1 = fishInventory.pop();
+                let fish2 = fishInventory.pop();
+                let mealName = recipes[fish1.name + "+" + fish2.name] || "Mystery Dish";
+                mealInventory.push({ name: mealName });
+                if (!recipeBook.includes(mealName)) {
+                    recipeBook.push(mealName);
+                    alert(New Recipe Discovered: ${mealName});
+                }
                 updateInventory();
             } else {
                 alert("You need more fish to cook!");
@@ -117,59 +114,68 @@
         }
 
         function sellFood() {
-            let earnings = mealInventory.length * 5 + cropInventory.length * 3;
+            let earnings = mealInventory.length * 10 + cropInventory.length * 5;
             coins += earnings;
             mealInventory = [];
             cropInventory = [];
             updateInventory();
         }
 
-        function buyUpgrade() {
-            if (coins >= 20) {
+        function buyItem(item) {
+            if (item === "Rod" && coins >= 20) {
                 coins -= 20;
                 fishingLevel++;
-                alert("You upgraded your fishing gear! Catch more fish!");
-                updateInventory();
+                alert("Fishing gear upgraded!");
+            } else if (item === "Bait" && coins >= 5) {
+                coins -= 5;
+                alert("Bait purchased!");
+            } else if (item === "Seeds" && coins >= 3) {
+                coins -= 3;
+                cropInventory.push({ name: "Planted Crop" });
             } else {
-                alert("Not enough coins for an upgrade!");
+                alert("Not enough coins!");
             }
+            updateInventory();
         }
 
         function plantCrop() {
             setTimeout(() => {
-                let crop = { name: "Carrot", description: "A fresh organic carrot." };
-                cropInventory.push(crop);
-                alert("Your crops are ready to harvest!");
+                cropInventory.push({ name: "Harvested Crop" });
                 updateInventory();
-            }, 5000);
+            }, 3000);
         }
 
         function harvestCrops() {
             if (cropInventory.length > 0) {
-                alert("You harvested your crops!");
+                alert("Crops harvested!");
                 updateInventory();
             } else {
                 alert("No crops to harvest!");
             }
         }
 
-        function travel() {
-            alert("You traveled to a new location!");
+        function openStore() {
+            document.querySelector(".store").classList.remove("hidden");
         }
 
-        function toggleInventory(id) {
-            let element = document.getElementById(id);
-            element.style.display = element.style.display === "block" ? "none" : "block";
+        function closeStore() {
+            document.querySelector(".store").classList.add("hidden");
+        }
+
+        function openFishTank() {
+            document.querySelector(".fish-tank").classList.remove("hidden");
+            document.getElementById("fishTankList").innerHTML = fishInventory.map(f => <li>${f.name} (${f.rarity})</li>).join('');
+        }
+
+        function closeFishTank() {
+            document.querySelector(".fish-tank").classList.add("hidden");
         }
 
         function updateInventory() {
             document.getElementById('coins').textContent = coins;
             document.getElementById('fishingLevel').textContent = fishingLevel;
-            document.getElementById('fishList').innerHTML = fishInventory.map(f => `<li>${f.name} (${f.rarity}) - ${f.weight}, ${f.length}: ${f.description}</li>`).join('');
-            document.getElementById('mealList').innerHTML = mealInventory.map(m => `<li>${m.name}: ${m.description}</li>`).join('');
-            document.getElementById('cropList').innerHTML = cropInventory.map(c => `<li>${c.name}: ${c.description}</li>`).join('');
+            document.getElementById('inventoryList').innerHTML = fishInventory.map(f => <li>${f.name} (${f.rarity})</li>).join('');
         }
     </script>
 </body>
 </html>
-
