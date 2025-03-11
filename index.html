@@ -11,7 +11,7 @@
             color: #333;
             text-align: center;
         }
-        #inventory, #store, #strainDetails {
+        #inventory, #store, #strainDetails, #gameInfo, #growArea, #upgrades {
             margin: 20px;
             padding: 10px;
             border: 2px solid #ccc;
@@ -33,11 +33,18 @@
         .inventory-item, .strain-item {
             margin: 5px 0;
         }
-        #game-info {
-            margin-top: 20px;
-        }
         .emoji {
             font-size: 20px;
+        }
+        .upgrade-item {
+            margin: 10px;
+        }
+        #growArea {
+            display: flex;
+            justify-content: center;
+        }
+        #gameInfo {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -45,150 +52,154 @@
 
 <h1>🌿 Welcome to the Weed Game! 🌿</h1>
 
-<div id="game-info">
+<div id="gameInfo">
     <p>Your balance: <span id="balance">100</span> 💰</p>
-    <p>Strain Level: <span id="strain-level">10%</span></p>
+    <p>Your farm level: <span id="farmLevel">1</span></p>
     <p>Owned Properties: <span id="properties">None</span></p>
+</div>
+
+<div id="growArea">
+    <button onclick="growPlant()">Grow Plant 🌱</button>
 </div>
 
 <div id="inventory">
     <h2>Your Inventory 🛒</h2>
-    <div id="weed-inventory">
-        <!-- Weed inventory will be displayed here -->
-    </div>
-    <button onclick="addWeed()">Add Weed 🌱</button>
-    <button onclick="consumeEdible()">Consume Edible 🍪</button>
-    <button onclick="smokeJoint()">Smoke Joint 🚬</button>
+    <div id="weedInventory"></div>
+    <div id="ediblesInventory"></div>
+    <div id="jointsInventory"></div>
+    <div id="waxInventory"></div>
 </div>
 
 <div id="store">
-    <h2>Store 🏬</h2>
-    <button onclick="buyStrain()">Buy Strain 🌿</button>
-    <button onclick="buyEdible()">Buy Edible 🍩</button>
-    <button onclick="buyJoint()">Buy Joint 🚬</button>
-    <button onclick="buyProperty()">Buy Property 🏡</button>
+    <h2>Store 🏪</h2>
+    <button onclick="buyUpgrade()">Upgrade Farm (+$50)</button>
+    <button onclick="buyStrain()">Buy Strain ($100)</button>
 </div>
 
 <div id="strainDetails">
-    <h2>Strain Details 🔍</h2>
-    <p id="strain-info">Click on a strain to see details.</p>
+    <h2>Strains 💨</h2>
+    <div id="strainList"></div>
 </div>
 
 <script>
-// Game data
-let inventory = [];
-let balance = 100;
-let ownedProperties = [];
+    let balance = 100;
+    let farmLevel = 1;
+    let properties = [];
+    let weedInventory = 0;
+    let ediblesInventory = 0;
+    let jointsInventory = 0;
+    let waxInventory = 0;
+    let strains = [
+        {name: "Blue Dream", THC: "20%", country: "USA", rarity: "Common", price: 100},
+        {name: "OG Kush", THC: "25%", country: "USA", rarity: "Rare", price: 150},
+        {name: "Purple Haze", THC: "22%", country: "Colombia", rarity: "Epic", price: 200},
+    ];
 
-// Strains available in the store
-let strains = [
-    { name: "Blue Dream", thc: 20, origin: "California", rarity: "Common", price: 10 },
-    { name: "OG Kush", thc: 25, origin: "USA", rarity: "Rare", price: 15 },
-    { name: "Granddaddy Purple", thc: 22, origin: "California", rarity: "Common", price: 12 },
-    { name: "Girl Scout Cookies", thc: 18, origin: "USA", rarity: "Legendary", price: 20 }
-];
-
-// Edibles and joints
-let edibles = [{ name: "Cannabis Brownie", thc: 50, price: 5 }];
-let joints = [{ name: "Pre-Rolled Joint", thc: 100, price: 7 }];
-
-// Update balance and display weed in inventory
-function updateBalance(amount) {
-    balance += amount;
-    document.getElementById('balance').textContent = balance;
-}
-
-// Add weed to inventory
-function addWeed() {
-    let strain = strains[Math.floor(Math.random() * strains.length)];
-    inventory.push({ strain: strain.name, thc: strain.thc });
-    displayInventory();
-}
-
-// Consume an edible
-function consumeEdible() {
-    if (edibles.length > 0) {
-        let edible = edibles[0];
-        inventory.push({ strain: "Edible", thc: edible.thc });
-        edibles.pop(); // Remove the edible after consumption
-        displayInventory();
-        alert("You consumed a " + edible.name + "!");
-    } else {
-        alert("No edibles in your inventory!");
+    function updateGameInfo() {
+        document.getElementById('balance').textContent = balance;
+        document.getElementById('farmLevel').textContent = farmLevel;
+        document.getElementById('properties').textContent = properties.join(", ") || "None";
+        document.getElementById('weedInventory').innerHTML = `Weed: ${weedInventory}g`;
+        document.getElementById('ediblesInventory').innerHTML = `Edibles: ${ediblesInventory}`;
+        document.getElementById('jointsInventory').innerHTML = `Joints: ${jointsInventory}`;
+        document.getElementById('waxInventory').innerHTML = `Wax: ${waxInventory}`;
     }
-}
 
-// Smoke a joint
-function smokeJoint() {
-    if (joints.length > 0) {
-        let joint = joints[0];
-        inventory.push({ strain: "Joint", thc: joint.thc });
-        joints.pop(); // Remove the joint after use
-        displayInventory();
-        alert("You smoked a " + joint.name + "!");
-    } else {
-        alert("No joints in your inventory!");
+    function growPlant() {
+        let plantYield = Math.floor(Math.random() * 10) + 1; // Random yield between 1 and 10 grams
+        weedInventory += plantYield;
+        balance += 10; // Small balance increase after growing plant
+        updateGameInfo();
+        alert(`You grew ${plantYield}g of weed!`);
     }
-}
 
-// Display inventory
-function displayInventory() {
-    let inventoryDiv = document.getElementById('weed-inventory');
-    inventoryDiv.innerHTML = "";
-    inventory.forEach(item => {
-        let div = document.createElement('div');
-        div.classList.add('inventory-item');
-        div.textContent = item.strain + " (" + item.thc + "mg THC)";
-        inventoryDiv.appendChild(div);
-    });
-}
-
-// Buy a strain
-function buyStrain() {
-    let strain = strains[Math.floor(Math.random() * strains.length)];
-    if (balance >= strain.price) {
-        updateBalance(-strain.price);
-        alert("You bought " + strain.name + " for " + strain.price + " coins.");
-    } else {
-        alert("You don't have enough coins!");
+    function buyUpgrade() {
+        if (balance >= 50) {
+            balance -= 50;
+            farmLevel++;
+            updateGameInfo();
+            alert("Farm upgraded! Your farm level is now " + farmLevel);
+        } else {
+            alert("Not enough balance to upgrade farm.");
+        }
     }
-}
 
-// Buy an edible
-function buyEdible() {
-    if (balance >= edibles[0].price) {
-        updateBalance(-edibles[0].price);
-        alert("You bought a " + edibles[0].name);
-    } else {
-        alert("You don't have enough coins!");
+    function buyStrain() {
+        if (balance >= 100) {
+            balance -= 100;
+            let strain = strains[Math.floor(Math.random() * strains.length)];
+            properties.push(strain.name);
+            alert(`You bought ${strain.name} strain!`);
+            updateGameInfo();
+        } else {
+            alert("Not enough balance to buy strain.");
+        }
     }
-}
 
-// Buy a joint
-function buyJoint() {
-    if (balance >= joints[0].price) {
-        updateBalance(-joints[0].price);
-        alert("You bought a " + joints[0].name);
-    } else {
-        alert("You don't have enough coins!");
+    function makeJoint() {
+        if (weedInventory >= 1) {
+            weedInventory -= 1;
+            jointsInventory += 1;
+            updateGameInfo();
+            alert("You made a joint! 🔥");
+        } else {
+            alert("Not enough weed to make a joint.");
+        }
     }
-}
 
-// Buy a property
-function buyProperty() {
-    let propertyName = prompt("Enter the name of your new property:");
-    if (propertyName) {
-        ownedProperties.push(propertyName);
-        document.getElementById('properties').textContent = ownedProperties.join(", ");
-        updateBalance(-50); // Deduct 50 coins for property purchase
+    function makeEdible() {
+        if (weedInventory >= 0.5) {
+            weedInventory -= 0.5;
+            ediblesInventory += 1;
+            updateGameInfo();
+            alert("You made an edible 🍪!");
+        } else {
+            alert("Not enough weed to make an edible.");
+        }
     }
-}
 
-// Show strain details
-function showStrainDetails(strain) {
-    let strainInfo = `Name: ${strain.name}<br>THC Level: ${strain.thc}%<br>Origin: ${strain.origin}<br>Rarity: ${strain.rarity}<br>Price: ${strain.price} coins`;
-    document.getElementById('strain-info').innerHTML = strainInfo;
-}
+    function makeWax() {
+        if (weedInventory >= 2) {
+            weedInventory -= 2;
+            waxInventory += 1;
+            updateGameInfo();
+            alert("You made wax 💎!");
+        } else {
+            alert("Not enough weed to make wax.");
+        }
+    }
+
+    // Display strains and make purchase buttons for them
+    function displayStrains() {
+        let strainList = document.getElementById('strainList');
+        strainList.innerHTML = '';
+        strains.forEach(strain => {
+            let strainElement = document.createElement('div');
+            strainElement.classList.add('strain-item');
+            strainElement.innerHTML = `${strain.name} - THC: ${strain.THC}, Country: ${strain.country}, Rarity: ${strain.rarity}, Price: $${strain.price}`;
+            strainList.appendChild(strainElement);
+        });
+    }
+
+    // Initial UI updates
+    displayStrains();
+    updateGameInfo();
+
+    // Event Listeners for making products
+    const makeJointButton = document.createElement("button");
+    makeJointButton.textContent = "Make Joint 🌿";
+    makeJointButton.onclick = makeJoint;
+    document.getElementById('inventory').appendChild(makeJointButton);
+
+    const makeEdibleButton = document.createElement("button");
+    makeEdibleButton.textContent = "Make Edible 🍪";
+    makeEdibleButton.onclick = makeEdible;
+    document.getElementById('inventory').appendChild(makeEdibleButton);
+
+    const makeWaxButton = document.createElement("button");
+    makeWaxButton.textContent = "Make Wax 💎";
+    makeWaxButton.onclick = makeWax;
+    document.getElementById('inventory').appendChild(makeWaxButton);
 </script>
 
 </body>
