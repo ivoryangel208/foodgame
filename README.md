@@ -5,15 +5,14 @@ class FishingGame:
         self.fish_count = 0
         self.coins = 0
         self.fishing_level = 1
-        # List of 40 Fish Types (20 new fish added)
         self.fish_types = ['🐟', '🐠', '🐡', '🦈', '🐋', '🐠', '🐡', '🐟', '🐠', '🐟', '🐋', '🐡', '🐟', '🐠', '🐟', '🐠', '🐡', '🐠', '🐟', '🐋', 
                           '🐡', '🐠', '🐟', '🐟', '🐠', '🐋', '🐠', '🐟', '🐋', '🐠', '🐠', '🐡', '🐟', '🐋', '🐠', '🐠', '🐡', '🐟', '🐋', '🐟']
         self.species = ['Salmon', 'Trout', 'Bass', 'Pike', 'Shark', 'Whale', 'Cod', 'Mackerel', 'Carp', 'Tuna', 'Swordfish', 'Anglerfish', 'Catfish',
                         'Marlin', 'Barracuda', 'Swordfish', 'Bluegill', 'Snapper', 'Flounder', 'Grouper', 'Largemouth Bass', 'Goldfish', 'Perch', 'Bream', 
                         'Sturgeon', 'Eel', 'Kingfish', 'Tilapia', 'Gudgeon', 'Lobster', 'Jellyfish', 'Piranha', 'Lionfish', 'Tetra', 'Clownfish', 'Sardine',
                         'Piranha', 'Angelfish']
-        self.fish_log = []  # To log all catches
-        self.aquarium = []  # To store caught fish
+        self.fish_log = []
+        self.aquarium = []
         self.store_items = {"Fishing Rod Upgrade": 20, "Bait": 10, "Boat Upgrade": 50}
 
     def display_inventory(self):
@@ -85,7 +84,6 @@ class FishingGame:
         self.coins += price
         self.log_catch(fish, weight, length, rarity, price, description, nickname)
         
-        # Add to aquarium if rarity is greater than "Common"
         if rarity != 'Common':
             self.aquarium.append({"Nickname": nickname, "Species": species, "Weight": weight, "Length": length, "Rarity": rarity})
             print(f"Added {fish} to aquarium!")
