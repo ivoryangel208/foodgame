@@ -59,7 +59,8 @@
 </div>
 
 <div id="growArea">
-    <button onclick="growPlant()">Grow Plant 🌱</button>
+    <button onclick="growPlant()">Grow Weed 🌱</button>
+    <button onclick="growBulk()">Grow Bulk (1 oz) 🌿</button>
 </div>
 
 <div id="inventory">
@@ -74,6 +75,8 @@
     <h2>Store 🏪</h2>
     <button onclick="buyUpgrade()">Upgrade Farm (+$50)</button>
     <button onclick="buyStrain()">Buy Strain ($100)</button>
+    <button onclick="sellWeed()">Sell Weed 💸</button>
+    <button onclick="sellBulkWeed()">Sell Bulk Weed 💸</button>
 </div>
 
 <div id="strainDetails">
@@ -85,7 +88,7 @@
     let balance = 100;
     let farmLevel = 1;
     let properties = [];
-    let weedInventory = 0;
+    let weedInventory = 0; // In grams
     let ediblesInventory = 0;
     let jointsInventory = 0;
     let waxInventory = 0;
@@ -95,6 +98,7 @@
         {name: "Purple Haze", THC: "22%", country: "Colombia", rarity: "Epic", price: 200},
     ];
 
+    // Update Game Information
     function updateGameInfo() {
         document.getElementById('balance').textContent = balance;
         document.getElementById('farmLevel').textContent = farmLevel;
@@ -105,25 +109,52 @@
         document.getElementById('waxInventory').innerHTML = `Wax: ${waxInventory}`;
     }
 
-    function growPlant() {
-        let plantYield = Math.floor(Math.random() * 10) + 1; // Random yield between 1 and 10 grams
+    // Grow Weed in Bulk (Ounces)
+    function growBulk() {
+        let plantYield = 28; // 1 ounce = 28 grams
         weedInventory += plantYield;
-        balance += 10; // Small balance increase after growing plant
+        balance += 20; // Increase balance slightly for bulk growing
+        updateGameInfo();
+        alert(`You grew 1 ounce (28g) of weed!`);
+    }
+
+    // Grow a Single Plant (Random yield between 1 and 10 grams)
+    function growPlant() {
+        let plantYield = Math.floor(Math.random() * 10) + 1;
+        weedInventory += plantYield;
+        balance += 10; // Increase balance slightly after growing
         updateGameInfo();
         alert(`You grew ${plantYield}g of weed!`);
     }
 
-    function buyUpgrade() {
-        if (balance >= 50) {
-            balance -= 50;
-            farmLevel++;
+    // Sell Weed (Bulk or Individual grams)
+    function sellWeed() {
+        if (weedInventory >= 1) {
+            let weedToSell = Math.floor(Math.random() * weedInventory) + 1;
+            weedInventory -= weedToSell;
+            balance += weedToSell * 10;
             updateGameInfo();
-            alert("Farm upgraded! Your farm level is now " + farmLevel);
+            alert(`You sold ${weedToSell}g of weed for $${weedToSell * 10}`);
         } else {
-            alert("Not enough balance to upgrade farm.");
+            alert("You don't have enough weed to sell.");
         }
     }
 
+    // Sell Bulk Weed (Ounces)
+    function sellBulkWeed() {
+        if (weedInventory >= 28) { // 1 ounce = 28 grams
+            let bulkToSell = Math.floor(weedInventory / 28);
+            let amountSold = bulkToSell * 28;
+            weedInventory -= amountSold;
+            balance += bulkToSell * 250; // Sell bulk weed for $250 per ounce
+            updateGameInfo();
+            alert(`You sold ${bulkToSell} ounces (${amountSold}g) of weed for $${bulkToSell * 250}`);
+        } else {
+            alert("You don't have enough weed to sell in bulk.");
+        }
+    }
+
+    // Buy Strain
     function buyStrain() {
         if (balance >= 100) {
             balance -= 100;
@@ -136,40 +167,46 @@
         }
     }
 
+    // Make Joint (Bulk Option)
     function makeJoint() {
-        if (weedInventory >= 1) {
-            weedInventory -= 1;
-            jointsInventory += 1;
+        let jointCount = Math.floor(weedInventory / 1); // Make a joint from 1g of weed
+        if (weedInventory >= jointCount) {
+            weedInventory -= jointCount;
+            jointsInventory += jointCount;
             updateGameInfo();
-            alert("You made a joint! 🔥");
+            alert(`You made ${jointCount} joints!`);
         } else {
-            alert("Not enough weed to make a joint.");
+            alert("Not enough weed to make joints.");
         }
     }
 
+    // Make Edible (Bulk Option)
     function makeEdible() {
-        if (weedInventory >= 0.5) {
-            weedInventory -= 0.5;
-            ediblesInventory += 1;
+        let edibleCount = Math.floor(weedInventory / 0.5); // Make an edible from 0.5g of weed
+        if (weedInventory >= edibleCount * 0.5) {
+            weedInventory -= edibleCount * 0.5;
+            ediblesInventory += edibleCount;
             updateGameInfo();
-            alert("You made an edible 🍪!");
+            alert(`You made ${edibleCount} edibles!`);
         } else {
-            alert("Not enough weed to make an edible.");
+            alert("Not enough weed to make edibles.");
         }
     }
 
+    // Make Wax (Bulk Option)
     function makeWax() {
-        if (weedInventory >= 2) {
-            weedInventory -= 2;
-            waxInventory += 1;
+        let waxCount = Math.floor(weedInventory / 2); // Make wax from 2g of weed
+        if (weedInventory >= waxCount * 2) {
+            weedInventory -= waxCount * 2;
+            waxInventory += waxCount;
             updateGameInfo();
-            alert("You made wax 💎!");
+            alert(`You made ${waxCount} wax!`);
         } else {
             alert("Not enough weed to make wax.");
         }
     }
 
-    // Display strains and make purchase buttons for them
+    // Display Strains
     function displayStrains() {
         let strainList = document.getElementById('strainList');
         strainList.innerHTML = '';
@@ -197,7 +234,7 @@
     document.getElementById('inventory').appendChild(makeEdibleButton);
 
     const makeWaxButton = document.createElement("button");
-    makeWaxButton.textContent = "Make Wax 💎";
+    makeWaxButton.textContent = "Make Wax 🧴";
     makeWaxButton.onclick = makeWax;
     document.getElementById('inventory').appendChild(makeWaxButton);
 </script>
