@@ -219,4 +219,56 @@
             if (plant.status === "Ready to Harvest") {
                 money += 10;
                 processedProducts.joints++;
-                alert(`Made a joint
+                alert(`Made a joint from ${plant.name}.`);
+                plants.pop();
+                updateUI();
+            }
+        });
+
+        document.getElementById("make-edible-button").addEventListener("click", () => {
+            const plant = plants[plants.length - 1];
+            if (plant.status === "Ready to Harvest") {
+                money += 15;
+                processedProducts.edibles++;
+                alert(`Made an edible from ${plant.name}.`);
+                plants.pop();
+                updateUI();
+            }
+        });
+
+        document.getElementById("make-dab-button").addEventListener("click", () => {
+            const plant = plants[plants.length - 1];
+            if (plant.status === "Ready to Harvest") {
+                money += 20;
+                processedProducts.dabs++;
+                alert(`Made a dab from ${plant.name}.`);
+                plants.pop();
+                updateUI();
+            }
+        });
+
+        // Sell Products
+        document.getElementById("sell-button").addEventListener("click", () => {
+            if (processedProducts.joints > 0 || processedProducts.edibles > 0 || processedProducts.dabs > 0) {
+                const revenue = processedProducts.joints * 10 + processedProducts.edibles * 15 + processedProducts.dabs * 20;
+                money += revenue;
+                processedProducts.joints = 0;
+                processedProducts.edibles = 0;
+                processedProducts.dabs = 0;
+                updateUI();
+                alert(`Sold all products for $${revenue}.`);
+            } else {
+                alert("No products to sell!");
+            }
+        });
+
+        // Travel to the Store (Placeholder for store features)
+        document.getElementById("travel-button").addEventListener("click", () => {
+            alert("You traveled to the store!");
+        });
+
+        // Initial UI Update
+        updateUI();
+    </script>
+</body>
+</html>
