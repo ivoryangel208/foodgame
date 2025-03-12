@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weed Farm Game</title>
+    <title>Weed Farm Tycoon</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -76,8 +76,14 @@
 
         <div class="inventory">
             <h3>Your Inventory:</h3>
-            <ul id="inventory-list">
+            <div><strong>Money: </strong><span id="money-count">100</span></div>
+            <h4>Plants</h4>
+            <ul id="plant-list">
                 <li>No plants yet!</li>
+            </ul>
+            <h4>Processed Products</h4>
+            <ul id="processed-list">
+                <li>No products made yet!</li>
             </ul>
         </div>
 
@@ -102,8 +108,14 @@
         let plants = [];
         let money = 100;
         let plantCount = 0;
-        let growingPlant = null;
         let isPlantReady = false;
+
+        // Processed products
+        let processedProducts = {
+            joints: 0,
+            edibles: 0,
+            dabs: 0
+        };
 
         // Strain Data
         const strains = [
@@ -118,14 +130,37 @@
             // Update status
             document.getElementById("game-status").textContent = `Money: $${money}`;
 
-            // Update Inventory
-            const inventoryList = document.getElementById("inventory-list");
-            inventoryList.innerHTML = "";
-            plants.forEach((plant, index) => {
-                const plantItem = document.createElement("li");
-                plantItem.textContent = `${plant.name} (${plant.thc} THC) - Status: ${plant.status}`;
-                inventoryList.appendChild(plantItem);
-            });
+            // Update Money
+            document.getElementById("money-count").textContent = money;
+
+            // Update Plant Inventory
+            const plantList = document.getElementById("plant-list");
+            plantList.innerHTML = "";
+            if (plants.length === 0) {
+                plantList.innerHTML = "<li>No plants yet!</li>";
+            } else {
+                plants.forEach((plant, index) => {
+                    const plantItem = document.createElement("li");
+                    plantItem.textContent = `${plant.name} (${plant.thc} THC) - Status: ${plant.status} - Time Left: ${plant.timeLeft} day(s)`;
+                    plantList.appendChild(plantItem);
+                });
+            }
+
+            // Update Processed Products
+            const processedList = document.getElementById("processed-list");
+            processedList.innerHTML = "";
+            if (processedProducts.joints > 0) {
+                processedList.innerHTML += `<li>Joints: ${processedProducts.joints}</li>`;
+            }
+            if (processedProducts.edibles > 0) {
+                processedList.innerHTML += `<li>Edibles: ${processedProducts.edibles}</li>`;
+            }
+            if (processedProducts.dabs > 0) {
+                processedList.innerHTML += `<li>Dabs: ${processedProducts.dabs}</li>`;
+            }
+            if (processedList.innerHTML === "") {
+                processedList.innerHTML = "<li>No products made yet!</li>";
+            }
 
             // Update Grow Logs
             const growLogList = document.getElementById("grow-log-list");
@@ -166,7 +201,7 @@
 
         // Harvest Plant
         document.getElementById("harvest-button").addEventListener("click", () => {
-            if (plants.length > 0 && !isPlantReady) {
+            if (plants.length > 0) {
                 const plant = plants[plants.length - 1];
                 if (plant.status === "Growing" && plant.timeLeft === 1) {
                     plant.status = "Ready to Harvest";
@@ -183,61 +218,5 @@
             const plant = plants[plants.length - 1];
             if (plant.status === "Ready to Harvest") {
                 money += 10;
-                alert(`Made a joint from ${plant.name}`);
-                plant.status = "Processed - Joint Made";
-                updateUI();
-            } else {
-                alert("You need to harvest the plant first!");
-            }
-        });
-
-        document.getElementById("make-edible-button").addEventListener("click", () => {
-            const plant = plants[plants.length - 1];
-            if (plant.status === "Ready to Harvest") {
-                money += 15;
-                alert(`Made an edible from ${plant.name}`);
-                plant.status = "Processed - Edible Made";
-                updateUI();
-            } else {
-                alert("You need to harvest the plant first!");
-            }
-        });
-
-        document.getElementById("make-dab-button").addEventListener("click", () => {
-            const plant = plants[plants.length - 1];
-            if (plant.status === "Ready to Harvest") {
-                money += 20;
-                alert(`Made a dab from ${plant.name}`);
-                plant.status = "Processed - Dab Made";
-                updateUI();
-            } else {
-                alert("You need to harvest the plant first!");
-            }
-        });
-
-        // Sell Weed
-        document.getElementById("sell-button").addEventListener("click", () => {
-            const plant = plants[plants.length - 1];
-            if (plant.status === "Processed - Joint Made" || plant.status === "Processed - Edible Made" || plant.status === "Processed - Dab Made") {
-                money += plant.price;
-                plants.pop();
-                alert("Weed Sold!");
-                updateUI();
-            } else {
-                alert("You need to process the weed before selling it!");
-            }
-        });
-
-        // Travel
-        document.getElementById("travel-button").addEventListener("click", () => {
-            const locations = ["Farm", "Store", "Processing Plant"];
-            const currentLocation = locations[Math.floor(Math.random() * locations.length)];
-            alert(`Traveling to ${currentLocation}`);
-            updateUI();
-        });
-
-        // Initial UI update
-        updateUI();
-    </script>
-</body>
-</html>
+                processedProducts.joints++;
+                alert(`Made a joint
