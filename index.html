@@ -1,1 +1,94 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Farm to Table Quest</title><script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script><style>body{margin:0;overflow:hidden;background-color:#87CEEB;}canvas{display:block;}</style></head><body><script>const config={type:Phaser.AUTO,width:800,height:600,backgroundColor:'#87CEEB',scene:{preload:function(){this.load.image('plantButton','https://via.placeholder.com/150x50?text=Plant+Button');this.load.image('harvestButton','https://via.placeholder.com/150x50?text=Harvest+Button');this.load.image('cookButton','https://via.placeholder.com/150x50?text=Cook+Button');this.load.image('farmBackground','https://via.placeholder.com/800x600?text=Farm+Background')},create:function(){this.add.image(400,300,'farmBackground');let cropPlanted=false;let plantButton=this.add.image(100,550,'plantButton').setInteractive();let harvestButton=this.add.image(250,550,'harvestButton').setInteractive();let cookButton=this.add.image(400,550,'cookButton').setInteractive();plantButton.on('pointerdown',()=>{if(!cropPlanted){cropPlanted=true;this.add.text(350,300,'Crop planted!',{font:'32px Arial',fill:'#000'});}});harvestButton.on('pointerdown',()=>{if(cropPlanted){cropPlanted=false;this.add.text(350,300,'Crop harvested!',{font:'32px Arial',fill:'#000'});}});cookButton.on('pointerdown',()=>{if(!cropPlanted){this.add.text(350,350,'Plant and Harvest first!',{font:'32px Arial',fill:'#ff0000'});}else{this.add.text(350,350,'Cooking dish...',{font:'32px Arial',fill:'#000'});}});},update:function(){}}};const game=new Phaser.Game(config);</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm to Table Quest</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #87CEEB;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+            backgroundColor: '#87CEEB',
+            scene: {
+                preload: function() {
+                    // Loading images
+                    this.load.image('plantButton', 'https://via.placeholder.com/150x50?text=Plant+Button');
+                    this.load.image('harvestButton', 'https://via.placeholder.com/150x50?text=Harvest+Button');
+                    this.load.image('cookButton', 'https://via.placeholder.com/150x50?text=Cook+Button');
+                    this.load.image('farmBackground', 'https://via.placeholder.com/800x600?text=Farm+Background');
+                    this.load.image('crop', 'https://via.placeholder.com/50x50?text=Crop');
+                    this.load.image('dish', 'https://via.placeholder.com/50x50?text=Dish');
+                },
+                create: function() {
+                    // Add background image
+                    this.add.image(400, 300, 'farmBackground');
+
+                    let cropPlanted = false;
+                    let crop = null;
+                    let dish = null;
+
+                    // Add plant, harvest, and cook buttons
+                    let plantButton = this.add.image(100, 550, 'plantButton').setInteractive();
+                    let harvestButton = this.add.image(250, 550, 'harvestButton').setInteractive();
+                    let cookButton = this.add.image(400, 550, 'cookButton').setInteractive();
+
+                    // Plant button functionality
+                    plantButton.on('pointerdown', () => {
+                        if (!cropPlanted) {
+                            cropPlanted = true;
+                            crop = this.add.image(400, 400, 'crop');
+                            this.add.text(350, 300, 'Crop planted!', { font: '32px Arial', fill: '#000' });
+                        }
+                    });
+
+                    // Harvest button functionality
+                    harvestButton.on('pointerdown', () => {
+                        if (cropPlanted) {
+                            cropPlanted = false;
+                            crop.setVisible(false);
+                            dish = this.add.image(400, 400, 'dish');
+                            this.add.text(350, 300, 'Crop harvested and dish created!', { font: '32px Arial', fill: '#000' });
+                        } else {
+                            this.add.text(350, 300, 'Plant a crop first!', { font: '32px Arial', fill: '#ff0000' });
+                        }
+                    });
+
+                    // Cook button functionality
+                    cookButton.on('pointerdown', () => {
+                        if (cropPlanted) {
+                            this.add.text(350, 350, 'Plant and harvest first!', { font: '32px Arial', fill: '#ff0000' });
+                        } else if (dish) {
+                            this.add.text(350, 350, 'Cooking your dish...', { font: '32px Arial', fill: '#000' });
+                            dish.setVisible(false);
+                            setTimeout(() => {
+                                this.add.text(350, 350, 'Dish cooked and ready to serve!', { font: '32px Arial', fill: '#000' });
+                            }, 2000);
+                        } else {
+                            this.add.text(350, 350, 'Harvest a crop to cook!', { font: '32px Arial', fill: '#ff0000' });
+                        }
+                    });
+                },
+                update: function() {
+                    // Game logic can go here (e.g., timed events, animations)
+                }
+            }
+        };
+
+        const game = new Phaser.Game(config);
+    </script>
+</body>
+</html>
