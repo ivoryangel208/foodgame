@@ -25,28 +25,30 @@
             backgroundColor: '#87CEEB',
             scene: {
                 preload: function() {
-                    // Loading images
+                    // Load images for buttons and background
                     this.load.image('plantButton', 'https://via.placeholder.com/150x50?text=Plant+Button');
                     this.load.image('harvestButton', 'https://via.placeholder.com/150x50?text=Harvest+Button');
                     this.load.image('cookButton', 'https://via.placeholder.com/150x50?text=Cook+Button');
                     this.load.image('farmBackground', 'https://via.placeholder.com/800x600?text=Farm+Background');
                     this.load.image('crop', 'https://via.placeholder.com/50x50?text=Crop');
                     this.load.image('dish', 'https://via.placeholder.com/50x50?text=Dish');
+                    this.load.image('basket', 'https://via.placeholder.com/100x100?text=Basket');
                 },
                 create: function() {
-                    // Add background image
+                    // Add farm background
                     this.add.image(400, 300, 'farmBackground');
 
                     let cropPlanted = false;
                     let crop = null;
                     let dish = null;
+                    let basket = null;
 
-                    // Add plant, harvest, and cook buttons
+                    // Add interactive buttons
                     let plantButton = this.add.image(100, 550, 'plantButton').setInteractive();
                     let harvestButton = this.add.image(250, 550, 'harvestButton').setInteractive();
                     let cookButton = this.add.image(400, 550, 'cookButton').setInteractive();
 
-                    // Plant button functionality
+                    // Plant Button - Plant crop logic
                     plantButton.on('pointerdown', () => {
                         if (!cropPlanted) {
                             cropPlanted = true;
@@ -55,25 +57,27 @@
                         }
                     });
 
-                    // Harvest button functionality
+                    // Harvest Button - Harvest crop logic
                     harvestButton.on('pointerdown', () => {
                         if (cropPlanted) {
                             cropPlanted = false;
                             crop.setVisible(false);
                             dish = this.add.image(400, 400, 'dish');
                             this.add.text(350, 300, 'Crop harvested and dish created!', { font: '32px Arial', fill: '#000' });
+                            basket = this.add.image(400, 460, 'basket');
                         } else {
                             this.add.text(350, 300, 'Plant a crop first!', { font: '32px Arial', fill: '#ff0000' });
                         }
                     });
 
-                    // Cook button functionality
+                    // Cook Button - Cook dish logic
                     cookButton.on('pointerdown', () => {
                         if (cropPlanted) {
                             this.add.text(350, 350, 'Plant and harvest first!', { font: '32px Arial', fill: '#ff0000' });
                         } else if (dish) {
                             this.add.text(350, 350, 'Cooking your dish...', { font: '32px Arial', fill: '#000' });
                             dish.setVisible(false);
+                            basket.setVisible(false);
                             setTimeout(() => {
                                 this.add.text(350, 350, 'Dish cooked and ready to serve!', { font: '32px Arial', fill: '#000' });
                             }, 2000);
@@ -83,7 +87,7 @@
                     });
                 },
                 update: function() {
-                    // Game logic can go here (e.g., timed events, animations)
+                    // Additional game logic can be added here if needed
                 }
             }
         };
