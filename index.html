@@ -33,9 +33,8 @@
         .ingredient-list {
             margin: 10px 0;
         }
-        .ingredient-list label {
-            display: block;
-            margin: 5px 0;
+        .ingredient-list button {
+            margin: 5px;
         }
     </style>
 </head>
@@ -98,22 +97,30 @@
         const createDishButton = document.getElementById('create-dish');
         const dishList = document.getElementById('dish-list');
 
-        // Dynamically add ingredient options to the page
-        function createIngredientOptions(ingredients, sectionId) {
+        // Dynamically add ingredient buttons to the page
+        function createIngredientButtons(ingredients, sectionId) {
             const section = document.getElementById(sectionId);
             ingredients.forEach(ingredient => {
-                const label = document.createElement('label');
-                label.innerHTML = `<input type="checkbox" class="ingredient" data-ingredient="${ingredient}"> ${ingredient}`;
-                section.appendChild(label);
+                const button = document.createElement('button');
+                button.textContent = ingredient;
+                button.classList.add('ingredient-button');
+                button.setAttribute('data-ingredient', ingredient);
+                button.onclick = function () {
+                    if (currentDish) {
+                        currentDish.ingredients.push(ingredient);
+                        updateDishDisplay();
+                    }
+                };
+                section.appendChild(button);
             });
         }
 
-        // Call the function to create the ingredient options
-        createIngredientOptions(meats, 'meat-section');
-        createIngredientOptions(fishes, 'fish-section');
-        createIngredientOptions(plants, 'plant-section');
-        createIngredientOptions(fruits, 'fruit-section');
-        createIngredientOptions(veggies, 'veg-section');
+        // Call the function to create the ingredient buttons
+        createIngredientButtons(meats, 'meat-section');
+        createIngredientButtons(fishes, 'fish-section');
+        createIngredientButtons(plants, 'plant-section');
+        createIngredientButtons(fruits, 'fruit-section');
+        createIngredientButtons(veggies, 'veg-section');
 
         // Create Dish
         createDishButton.addEventListener('click', function () {
@@ -139,16 +146,12 @@
 
         // View Dish
         document.getElementById('view-dish').addEventListener('click', function () {
-            // Get selected ingredients
-            const selectedIngredients = document.querySelectorAll('.ingredient:checked');
             if (!currentDish) {
                 alert("Please create a dish first.");
                 return;
             }
 
-            currentDish.ingredients = Array.from(selectedIngredients).map(input => input.getAttribute('data-ingredient'));
             currentDish.price = currentDish.ingredients.reduce((total, ingredient) => total + pricesPerIngredient[ingredient], 0);
-
             updateDishDisplay();
         });
 
@@ -168,5 +171,6 @@
             dishList.appendChild(dishDiv);
         }
     </script>
+
 </body>
 </html>
