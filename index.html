@@ -1,231 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dish Creation Game</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff; /* Light blue background for calming effect */
-            color: #333;
-            padding: 20px;
-            margin: 0;
-        }
-        h1, h3, h4 {
-            color: #5a9ab5; /* Soft teal for headings */
-            text-align: center;
-        }
-        input, button {
-            font-size: 16px;
-            padding: 10px;
-            margin: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .ingredient-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .ingredient-list button {
-            background-color: #f1f1f1;
-            border: 1px solid #ddd;
-            padding: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .ingredient-list button:hover {
-            background-color: #e0e0e0;
-        }
-        .dish-list {
-            margin-top: 20px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .dish {
-            background-color: #e9f7f6;
-            border: 1px solid #d0d0d0;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    h1, h2 {
+      color: #4CAF50;
+    }
+    .ingredient-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .ingredient-btn {
+      margin: 5px;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .ingredient-btn:hover {
+      background-color: #45a049;
+    }
+    .dish-info {
+      margin-top: 20px;
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    .dish-info h3 {
+      margin-bottom: 10px;
+      color: #4CAF50;
+    }
+    .dish-info p {
+      margin: 5px 0;
+    }
+    .calculate-btn {
+      background-color: #2196F3;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+    .calculate-btn:hover {
+      background-color: #1976D2;
+    }
+  </style>
 </head>
 <body>
 
-    <h1>Dish Creation Game</h1>
-    <label for="dish-name">Dish Name:</label>
-    <input type="text" id="dish-name" placeholder="Enter dish name" />
-    <button id="create-dish">Create Dish</button>
-    
-    <h3>Choose Ingredients for Your Dish</h3>
+  <h1>Recipe Creator Game</h1>
 
-    <!-- Meats Section -->
-    <div id="meat-section" class="ingredient-list">
-        <h4>Meats:</h4>
-    </div>
-    
-    <!-- Fishes Section -->
-    <div id="fish-section" class="ingredient-list">
-        <h4>Fishes:</h4>
-    </div>
-    
-    <!-- Plants Section -->
-    <div id="plant-section" class="ingredient-list">
-        <h4>Plants:</h4>
-    </div>
-    
-    <!-- Fruits Section -->
-    <div id="fruit-section" class="ingredient-list">
-        <h4>Fruits:</h4>
-    </div>
-    
-    <!-- Veggies Section -->
-    <div id="veg-section" class="ingredient-list">
-        <h4>Veggies:</h4>
+  <div id="ingredient-section">
+    <h2>Select Your Ingredients</h2>
+
+    <!-- Vegetables -->
+    <div>
+      <h3>Vegetables</h3>
+      <div class="ingredient-list" id="vegetables">
+        <!-- Buttons for vegetables will be inserted here -->
+      </div>
     </div>
 
-    <button id="view-dish">View Dish</button>
+    <!-- Fruits -->
+    <div>
+      <h3>Fruits</h3>
+      <div class="ingredient-list" id="fruits">
+        <!-- Buttons for fruits will be inserted here -->
+      </div>
+    </div>
 
-    <div id="dish-list" class="dish-list"></div>
+    <!-- Proteins -->
+    <div>
+      <h3>Proteins</h3>
+      <div class="ingredient-list" id="proteins">
+        <!-- Buttons for proteins will be inserted here -->
+      </div>
+    </div>
 
-    <script>
-        // Define ingredients (with added ones)
-        const meats = [
-            "Beef", "Chicken", "Pork", "Lamb", "Venison", "Rabbit", "Goat", "Duck", "Bison", "Kangaroo", 
-            "Turkey", "Boar", "Elk", "Emu", "Ostrich", "Quail", "Pheasant", "Goose", "Sausage", "Pastrami", 
-            "Salami", "Pepperoni", "Jerky", "T-bone steak", "Ribs", "Liver", "Lamb chops", "Chicken wings", 
-            "Chicken breast", "Chicken thighs", "Duck breast", "Pork belly", "Ribeye", "Filet mignon", "Ground beef",
-            "Bacon", "Pork shoulder", "Beef brisket", "Short ribs", "Chorizo", "Mutton", "Tri-tip", "Flank steak", 
-            "Steak tips", "Chicken legs", "Chicken drumsticks", "Brisket", "Liverwurst", "Lamb leg", "Pulled pork", 
-            "Roast beef", "Corned beef", "Pork ribs"
-        ];
-        const fishes = [
-            "Salmon", "Tuna", "Trout", "Cod", "Herring", "Sardine", "Mackerel", "Swordfish", "Halibut", "Bass", 
-            "Pike", "Catfish", "Perch", "Shark", "Anchovy", "Tilapia", "Eel", "Walleye", "Flounder", "Pollock", 
-            "Clams", "Mussels", "Shrimp", "Crab", "Lobster", "Scallops", "Oysters", "Octopus", "Squid", "Caviar", 
-            "Sea bass", "Barracuda", "Snapper", "Mahi Mahi", "Sea trout", "Chilean sea bass", "Red snapper", 
-            "Scampi", "Mullet", "Tilapia", "Swordfish", "Kingfish", "Anchovy", "Pompano", "Langoustine", "Turbot",
-            "Arctic char", "Amberjack", "Flounder", "Seabream", "John Dory"
-        ];
-        const plants = [
-            "Carrot", "Potato", "Spinach", "Tomato", "Broccoli", "Cabbage", "Lettuce", "Cauliflower", "Onion", 
-            "Garlic", "Peppers", "Zucchini", "Squash", "Pumpkin", "Eggplant", "Beets", "Asparagus", "Radish", 
-            "Artichoke", "Kale", "Brussels sprouts", "Chard", "Sweet potato", "Cucumber", "Green beans", "Celery", 
-            "Leeks", "Parsnips", "Mushrooms", "Fennel", "Turnips", "Olives", "Chili peppers", "Okra", "Taro root", 
-            "Nori", "Algae", "Bamboo shoots", "Rhubarb", "Watercress", "Sorrel", "Collard greens", "Chili flakes",
-            "Dandelion greens", "Moringa", "Chives", "Bok choy", "Mustard greens", "Radicchio", "Seaweed", "Tarragon", 
-            "Oregano", "Coriander", "Thyme"
-        ];
-        const fruits = [
-            "Apple", "Banana", "Strawberry", "Orange", "Grapes", "Mango", "Pineapple", "Peach", "Plum", "Kiwi", 
-            "Cherry", "Blueberry", "Raspberry", "Blackberry", "Papaya", "Watermelon", "Cantaloupe", "Lemon", "Lime", 
-            "Grapefruit", "Pear", "Pomegranate", "Fig", "Apricot", "Dragonfruit", "Passionfruit", "Lychee", 
-            "Tangerine", "Starfruit", "Guava", "Coconut", "Durian", "Jackfruit", "Persimmon", "Mulberry", "Clementine", 
-            "Figs", "Persimmons", "Nectarine", "Soursop", "Blood orange", "Cherimoya", "Acai berry", "Goji berry",
-            "Elderberry", "Pineberry", "Tamarillo", "Quince", "Jabuticaba", "Longan", "Salak", "Breadfruit"
-        ];
-        const veggies = [
-            "Corn", "Beets", "Lettuce", "Celery", "Carrot", "Peas", "Potatoes", "Brussels sprouts", "Sweet corn", 
-            "Bell pepper", "Tomatoes", "Asparagus", "Cabbage", "Cauliflower", "Cucumber", "Spinach", "Zucchini", 
-            "Leeks", "Kale", "Chard", "Radishes", "Arugula", "Rutabaga", "Turnip", "Okra", "Chili pepper", 
-            "Fennel", "Onion", "Garlic", "Shallots", "Chives", "Watercress", "Endive", "Bok choy", "Mustard greens",
-            "Edamame", "Chayote", "Kohlrabi", "Napa cabbage", "Shiitake mushrooms", "Daikon", "Sunchokes", "Yucca",
-            "Mache", "Wheatgrass", "Sweet peas", "Mizuna", "Taro", "Lotus root", "Fiddlehead ferns", "Bamboo shoots", 
-            "Chili flakes"
-        ];
+    <!-- Fish -->
+    <div>
+      <h3>Fish</h3>
+      <div class="ingredient-list" id="fish">
+        <!-- Buttons for fish will be inserted here -->
+      </div>
+    </div>
 
-        // Price for each ingredient (example)
-        const pricesPerIngredient = {
-            "Beef": 5, "Chicken": 4, "Pork": 3, "Lamb": 6, "Venison": 8, "Rabbit": 7, "Goat": 5, "Duck": 6, 
-            "Bison": 7, "Kangaroo": 9, "Turkey": 4, "Boar": 8, "Elk": 10, "Emu": 7, "Ostrich": 8, "Quail": 6, 
-            "Pheasant": 6, "Goose": 7, "Sausage": 3, "Pastrami": 5, "Salami": 4, "Pepperoni": 3, "Jerky": 6,
-            "Salmon": 7, "Tuna": 6, "Trout": 5, "Cod": 4, "Herring": 3, "Sardine": 2, "Mackerel": 5, "Swordfish": 8,
-            "Halibut": 7, "Bass": 5, "Pike": 5, "Catfish": 4, "Perch": 4, "Shark": 10, "Anchovy": 3, "Tilapia": 4, 
-            "Eel": 6, "Walleye": 6, "Flounder": 5, "Pollock": 4, "Clams": 5, "Mussels": 4, "Shrimp": 6, "Crab": 7,
-            "Lobster": 9, "Scallops": 8, "Oysters": 7, "Octopus": 9, "Squid": 5, "Caviar": 10, "Sea bass": 7, 
-            "Barracuda": 8, "Snapper": 7, "Mahi Mahi": 7, "Sea trout": 6, "Chilean sea bass": 10, "Red snapper": 6,
-            "Carrot": 1, "Potato": 1, "Spinach": 2, "Tomato": 2, "Broccoli": 3, "Cabbage": 2, "Lettuce": 1, 
-            "Cauliflower": 3, "Onion": 1, "Garlic": 2, "Peppers": 3, "Zucchini": 2, "Squash": 2, "Pumpkin": 3, 
-            "Eggplant": 2, "Beets": 2, "Asparagus": 4, "Radish": 2, "Artichoke": 5, "Kale": 3, "Brussels sprouts": 5,
-            "Chard": 3, "Sweet potato": 2, "Cucumber": 2, "Green beans": 3, "Celery": 1, "Leeks": 3, "Parsnips": 3, 
-            "Mushrooms": 4, "Fennel": 3, "Turnips": 2, "Olives": 3, "Chili peppers": 2, "Okra": 4, "Taro root": 5, 
-            "Nori": 2, "Algae": 3, "Bamboo shoots": 2, "Rhubarb": 3, "Watercress": 4, "Sorrel": 3, "Collard greens": 3,
-            "Chives": 2, "Bok choy": 3, "Mustard greens": 3, "Radicchio": 3, "Seaweed": 3, "Tarragon": 2, "Oregano": 2,
-            "Coriander": 2, "Thyme": 2, "Apple": 2, "Banana": 1, "Strawberry": 3, "Orange": 2, "Grapes": 3, "Mango": 4,
-            "Pineapple": 3, "Peach": 3, "Plum": 2, "Kiwi": 3, "Cherry": 4, "Blueberry": 3, "Raspberry": 3, 
-            "Blackberry": 3, "Papaya": 5, "Watermelon": 3, "Cantaloupe": 3, "Lemon": 2, "Lime": 2, "Grapefruit": 3,
-            "Pear": 2, "Pomegranate": 4, "Fig": 4, "Apricot": 3, "Dragonfruit": 6, "Passionfruit": 5, "Lychee": 5,
-            "Tangerine": 2, "Starfruit": 4, "Guava": 4, "Coconut": 5, "Durian": 7, "Jackfruit": 6, "Persimmon": 5,
-            "Mulberry": 4, "Clementine": 2, "Figs": 4, "Persimmons": 5, "Nectarine": 3, "Soursop": 5, "Blood orange": 3,
-            "Cherimoya": 6, "Acai berry": 7, "Goji berry": 4, "Elderberry": 4, "Pineberry": 6, "Tamarillo": 4,
-            "Quince": 3, "Jabuticaba": 5, "Longan": 5, "Salak": 5, "Breadfruit": 5
-        };
+    <!-- More ingredient categories can be added as needed -->
+  </div>
 
-        // Add ingredients to their respective sections
-        const addIngredients = (sectionId, ingredients) => {
-            const section = document.getElementById(sectionId);
-            section.innerHTML = ingredients.map(item => `<button class="ingredient">${item}</button>`).join('');
-        };
+  <!-- Dish Information and Calculate Section -->
+  <div id="dish-info" class="dish-info">
+    <h3>Your Dish</h3>
+    <p><strong>Dish Name:</strong> <span id="dish-name">Your Dish</span></p>
+    <p><strong>Ingredients:</strong> <span id="ingredients-list">None selected</span></p>
+    <p><strong>Price: </strong><span id="dish-price">$0</span></p>
+    <p><strong>Dish Rating:</strong> <span id="dish-rating">Not rated</span></p>
+    <button class="calculate-btn" id="calculate-btn">Calculate Price</button>
+  </div>
 
-        addIngredients("meat-section", meats);
-        addIngredients("fish-section", fishes);
-        addIngredients("plant-section", plants);
-        addIngredients("fruit-section", fruits);
-        addIngredients("veg-section", veggies);
+  <script>
+    // Arrays of ingredients for each category (Vegetables, Fruits, Proteins, Fish, etc.)
+    const vegetables = [
+      "Tomato", "Cucumber", "Carrot", "Onion", "Bell Pepper", "Lettuce", "Spinach", "Zucchini", "Broccoli", "Cauliflower",
+      "Eggplant", "Potato", "Sweet Potato", "Garlic", "Ginger", "Peas", "Green Beans", "Asparagus", "Mushrooms", "Brussels Sprouts",
+      "Leek", "Beetroot", "Kale", "Cabbage", "Chard", "Arugula", "Celeriac", "Radish", "Turnip", "Butternut Squash", "Parsnip",
+      "Rutabaga", "Pumpkin", "Fennel", "Chili Pepper", "Okra", "Artichoke", "Tomatillo", "Jalapeno", "Snow Peas", "Shallots",
+      "Chives", "Sweet Corn", "Fennel", "Chili", "Celery", "Chili Pepper", "Romaine Lettuce", "Cabbage", "Endive", "Bok Choy",
+      "Leeks", "Red Cabbage", "Sweet Peas", "Fennel Bulb", "Chicory", "Taro Root", "Daikon Radish", "Zucchini Squash", "Savoy Cabbage",
+      "Chayote", "Coriander"
+    ];
+    
+    const fruits = [
+      "Apple", "Banana", "Orange", "Grapes", "Blueberry", "Pineapple", "Peach", "Strawberry", "Raspberry", "Blackberry",
+      "Mango", "Papaya", "Watermelon", "Kiwi", "Lemon", "Lime", "Cantaloupe", "Pear", "Cherry", "Plum", "Pomegranate",
+      "Grapefruit", "Fig", "Apricot", "Dragonfruit", "Lychee", "Starfruit", "Passionfruit", "Mulberry", "Tangerine", "Coconut",
+      "Date", "Pluot", "Rhubarb", "Goji Berry", "Quince", "Persimmon", "Soursop", "Acai Berry", "Avocado", "Black Currant",
+      "Red Currant", "Jackfruit", "Nectarine", "Custard Apple", "Loquat", "Guanabana", "Longan", "Salak", "Clementine", "Soursop",
+      "Jaboticaba", "Cape Gooseberry", "Durian", "Mangosteen", "Baobab", "Yunnan Hackberry", "Surinam Cherry", "Limequat",
+      "Pomelo", "Carambola", "Jelly Palm", "Tamarillo", "Blood Orange", "Pomelo"
+    ];
+    
+    const proteins = [
+      "Chicken", "Beef", "Pork", "Lamb", "Turkey", "Duck", "Salmon", "Tuna", "Cod", "Shrimp", "Crab", "Lobster", "Swordfish",
+      "Herring", "Trout", "Mackerel", "Halibut", "Octopus", "Squid", "Tofu", "Tempeh", "Seitan", "Egg", "Chickpeas", "Lentils",
+      "Black Beans", "Kidney Beans", "Edamame", "Peas", "Quinoa", "Paneer", "Chicken Sausage", "Beef Sausage", "Pork Sausage",
+      "Salmon Fillet", "Chicken Thigh", "Chicken Breast", "Steak", "Pork Chop", "Lamb Chops", "Lobster Tail", "Crab Legs", "Chicken Wings",
+      "Venison", "Rabbit", "Goat", "Bison", "Duck Breast", "Pigeon", "Squab", "Goose", "Salmon Steak", "Haddock", "Perch", "Rockfish",
+      "Alaskan King Crab", "Mussels", "Clams", "Scallops", "Shrimp Skewers", "Oysters", "Abalone", "Caviar", "Venison Sausage", "Beef Jerky"
+    ];
+    
+    const fish = [
+      "Anchovy", "Bass", "Barramundi", "Catfish", "Carp", "Cod", "Flounder", "Goby", "Halibut", "Herring", "Jackfish", "Lingcod",
+      "Mackerel", "Monkfish", "Perch", "Pike", "Pollock", "Rainbow Trout", "Red Snapper", "Salmon", "Sardine", "Sea Bass", "Swordfish",
+      "Tilapia", "Tuna", "Wahoo", "Zander", "Whiting", "Bream", "Bluefish", "Bonito", "Butterfish", "Cobia", "Cusk", "Dory",
+      "Gurnard", "Halibut", "Lobster", "Mahi-Mahi", "Mullet", "Piranha", "Pollock", "Sole", "Spiny Lobster", "Sturgeon", "Yellowtail",
+      "Yabby", "Yellowfin Tuna", "Scallops", "Squid", "Cuttlefish", "Octopus", "Crab", "Abalone", "Oysters", "Clams", "Mussels",
+      "Sea Urchin"
+    ];
 
-        // Function to calculate the price of selected ingredients
-        const calculatePrice = () => {
-            let totalPrice = 0;
-            const selectedIngredients = document.querySelectorAll(".selected");
-            selectedIngredients.forEach(ingredient => {
-                const price = pricesPerIngredient[ingredient.textContent];
-                totalPrice += price;
-            });
-            return totalPrice;
-        };
+    // Add all ingredients into respective sections
+    function displayIngredients() {
+      const categories = [
+        { name: "vegetables", data: vegetables },
+        { name: "fruits", data: fruits },
+        { name: "proteins", data: proteins },
+        { name: "fish", data: fish }
+      ];
 
-        // Handling ingredient selection
-        document.querySelectorAll('.ingredient').forEach(button => {
-            button.addEventListener('click', () => {
-                button.classList.toggle('selected');
-                document.getElementById('create-dish').disabled = false;
-            });
+      categories.forEach(category => {
+        const container = document.getElementById(category.name);
+        category.data.forEach(ingredient => {
+          const btn = document.createElement("button");
+          btn.classList.add("ingredient-btn");
+          btn.textContent = ingredient;
+          btn.onclick = () => addIngredientToDish(ingredient);
+          container.appendChild(btn);
         });
+      });
+    }
 
-        // Creating the dish
-        document.getElementById("create-dish").addEventListener('click', () => {
-            const dishName = document.getElementById("dish-name").value;
-            const selectedIngredients = document.querySelectorAll(".selected");
-            const ingredientsList = Array.from(selectedIngredients).map(ingredient => ingredient.textContent).join(', ');
-            const price = calculatePrice();
-            const description = descriptions[Math.floor(Math.random() * descriptions.length)];
+    // Dish and ingredient handling
+    let selectedIngredients = [];
+    let dishPrice = 0;
 
-            const dishHTML = `
-                <div class="dish">
-                    <h4>${dishName || "Untitled Dish"}</h4>
-                    <p><strong>Ingredients:</strong> ${ingredientsList || "No ingredients selected"}</p>
-                    <p><strong>Description:</strong> ${description}</p>
-                    <p><strong>Price:</strong> $${price}</p>
-                </div>
-            `;
+    function addIngredientToDish(ingredient) {
+      if (!selectedIngredients.includes(ingredient)) {
+        selectedIngredients.push(ingredient);
+        updateDishInfo();
+      }
+    }
 
-            document.getElementById("dish-list").innerHTML = dishHTML;
-            document.getElementById("create-dish").disabled = true; // Disable the button after creating the dish
-        });
-    </script>
+    // Update the dish info dynamically
+    function updateDishInfo() {
+      const dishName = "Dish of the Day";
+      const dishRating = "4.5";  // This can be dynamic based on your preference
+      const ingredientsList = selectedIngredients.join(", ");
+      const price = selectedIngredients.length * 5;  // Just an example: $5 per ingredient
 
+      document.getElementById("dish-name").textContent = dishName;
+      document.getElementById("ingredients-list").textContent = ingredientsList;
+      document.getElementById("dish-price").textContent = `$${price}`;
+      document.getElementById("dish-rating").textContent = dishRating;
+    }
+
+    // Initialize ingredients and display them
+    displayIngredients();
+
+    // Handle the calculation (e.g., after dish creation)
+    document.getElementById("calculate-btn").onclick = () => {
+      alert("Price has been calculated based on selected ingredients!");
+    };
+  </script>
 </body>
 </html>
