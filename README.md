@@ -108,7 +108,6 @@
         let plants = [];
         let money = 100;
         let plantCount = 0;
-        let isPlantReady = false;
 
         // Processed products
         let processedProducts = {
@@ -272,3 +271,4 @@
     </script>
 </body>
 </html>
+
