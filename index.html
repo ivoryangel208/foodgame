@@ -121,9 +121,13 @@
       "Rutabaga", "Pumpkin", "Fennel", "Chili Pepper", "Okra", "Artichoke", "Tomatillo", "Jalapeno", "Snow Peas", "Shallots",
       "Chives", "Sweet Corn", "Fennel", "Chili", "Celery", "Chili Pepper", "Romaine Lettuce", "Cabbage", "Endive", "Bok Choy",
       "Leeks", "Red Cabbage", "Sweet Peas", "Fennel Bulb", "Chicory", "Taro Root", "Daikon Radish", "Zucchini Squash", "Savoy Cabbage",
-      "Chayote", "Coriander"
+      "Chayote", "Coriander", "Pumpkin", "Chili", "Cucumber", "Carrot", "Squash", "Snap Peas", "Soybeans", "Swiss Chard", "Garlic Scapes",
+      "Chinese Cabbage", "Scallions", "Oregano", "Parsley", "Basil", "Thyme", "Rosemary", "Cilantro", "Mints", "Dandelion Greens",
+      "Shitake Mushrooms", "Portobello Mushrooms", "Chanterelle Mushrooms", "Morel Mushrooms", "Tarragon", "Savoy Cabbage", "Purple Cabbage",
+      "Baby Corn", "Fennel", "Bamboo Shoots", "Chili Paste", "Miso Paste", "Yam", "Ramps", "Chili Flakes", "Dandelion Greens", "Kohlrabi",
+      "Edamame", "Fava Beans", "Soy Milk", "Tofu", "Tempeh"
     ];
-    
+
     const fruits = [
       "Apple", "Banana", "Orange", "Grapes", "Blueberry", "Pineapple", "Peach", "Strawberry", "Raspberry", "Blackberry",
       "Mango", "Papaya", "Watermelon", "Kiwi", "Lemon", "Lime", "Cantaloupe", "Pear", "Cherry", "Plum", "Pomegranate",
@@ -131,28 +135,40 @@
       "Date", "Pluot", "Rhubarb", "Goji Berry", "Quince", "Persimmon", "Soursop", "Acai Berry", "Avocado", "Black Currant",
       "Red Currant", "Jackfruit", "Nectarine", "Custard Apple", "Loquat", "Guanabana", "Longan", "Salak", "Clementine", "Soursop",
       "Jaboticaba", "Cape Gooseberry", "Durian", "Mangosteen", "Baobab", "Yunnan Hackberry", "Surinam Cherry", "Limequat",
-      "Pomelo", "Carambola", "Jelly Palm", "Tamarillo", "Blood Orange", "Pomelo"
+      "Pomelo", "Carambola", "Jelly Palm", "Tamarillo", "Blood Orange", "Pomelo", "Mango Papaya", "Strawberry Guava", "Golden Kiwi",
+      "Soursop", "Kumquat", "Black Grapes", "Green Apple", "Red Dragonfruit", "Green Dragonfruit", "Pink Guava", "Fuyu Persimmon",
+      "Pineberry", "Pink Grapefruit", "Golden Pear", "Cranberry", "Indian Gooseberry", "Sea Buckthorn", "Tamarind", "Salsify", "Lingonberry",
+      "Blueberry Peach", "Pineapple Guava", "Raspberry Lemon", "Blueberry Jam", "Lychee Rose", "Pomelo Lime", "Passionfruit Strawberry",
+      "Watermelon Mint", "Tangerine Blossom", "Mandarins", "Maracuja", "Blood Orange", "Watermelon Peach", "Mango Lime", "Tropical Citrus"
     ];
-    
+
     const proteins = [
       "Chicken", "Beef", "Pork", "Lamb", "Turkey", "Duck", "Salmon", "Tuna", "Cod", "Shrimp", "Crab", "Lobster", "Swordfish",
       "Herring", "Trout", "Mackerel", "Halibut", "Octopus", "Squid", "Tofu", "Tempeh", "Seitan", "Egg", "Chickpeas", "Lentils",
       "Black Beans", "Kidney Beans", "Edamame", "Peas", "Quinoa", "Paneer", "Chicken Sausage", "Beef Sausage", "Pork Sausage",
       "Salmon Fillet", "Chicken Thigh", "Chicken Breast", "Steak", "Pork Chop", "Lamb Chops", "Lobster Tail", "Crab Legs", "Chicken Wings",
-      "Venison", "Rabbit", "Goat", "Bison", "Duck Breast", "Pigeon", "Squab", "Goose", "Salmon Steak", "Haddock", "Perch", "Rockfish",
-      "Alaskan King Crab", "Mussels", "Clams", "Scallops", "Shrimp Skewers", "Oysters", "Abalone", "Caviar", "Venison Sausage", "Beef Jerky"
-    ];
-    
-    const fish = [
-      "Anchovy", "Bass", "Barramundi", "Catfish", "Carp", "Cod", "Flounder", "Goby", "Halibut", "Herring", "Jackfish", "Lingcod",
-      "Mackerel", "Monkfish", "Perch", "Pike", "Pollock", "Rainbow Trout", "Red Snapper", "Salmon", "Sardine", "Sea Bass", "Swordfish",
-      "Tilapia", "Tuna", "Wahoo", "Zander", "Whiting", "Bream", "Bluefish", "Bonito", "Butterfish", "Cobia", "Cusk", "Dory",
-      "Gurnard", "Halibut", "Lobster", "Mahi-Mahi", "Mullet", "Piranha", "Pollock", "Sole", "Spiny Lobster", "Sturgeon", "Yellowtail",
-      "Yabby", "Yellowfin Tuna", "Scallops", "Squid", "Cuttlefish", "Octopus", "Crab", "Abalone", "Oysters", "Clams", "Mussels",
-      "Sea Urchin"
+      "Venison", "Rabbit", "Goat", "Bison", "Quail", "Sardines", "Anchovies", "Egg Whites", "Almonds", "Pistachios", "Cashews",
+      "Peanut Butter", "Sunflower Seeds", "Pumpkin Seeds", "Chia Seeds", "Hemp Seeds", "Flax Seeds", "Coconut Flakes", "Coconut Milk",
+      "Mushrooms", "Ghee", "Butter", "Cottage Cheese", "Greek Yogurt", "Cheddar Cheese", "Parmesan", "Mozzarella", "Ricotta", "Feta",
+      "Brie", "Cream Cheese", "Goat Cheese", "Vegan Cheese", "Ricotta", "Eggplant", "Tempeh", "Vegan Sausage", "Chickpea Patties",
+      "Vegan Tacos", "Soy Milk", "Seitan", "Sausage", "Vegan Meatballs", "Tofu Skewers", "Vegan Stew", "Vegan Ribs", "Jackfruit Ribs",
+      "Vegan Bacon", "Coconut Yogurt", "Vegan Butter", "Silken Tofu", "Textured Vegetable Protein"
     ];
 
-    // Add all ingredients into respective sections
+    const fish = [
+      "Salmon", "Tuna", "Cod", "Herring", "Mackerel", "Trout", "Sardines", "Anchovies", "Halibut", "Swordfish", "Tilapia",
+      "Yellowtail", "Pollock", "Clams", "Mussels", "Oysters", "Crab", "Lobster", "Shrimp", "Scallops", "Octopus", "Squid", "Eel",
+      "Flounder", "Sea Bass", "Snapper", "Sturgeon", "Bluefish", "Gudgeon", "Pike", "Perch", "Barracuda", "Wahoo", "Pomfret",
+      "Grouper", "Tilapia", "Bass", "Carp", "Catfish", "Angelfish", "Trout", "Bluegill", "Redfish", "Rainbow Trout", "Rockfish",
+      "Sunfish", "Kingfish", "Yellowfin Tuna", "Whitefish", "Butterfish", "Black Bass", "Wreckfish", "Swai", "Largemouth Bass", "Sole",
+      "Gurnard", "Bream", "Mahi-Mahi", "Zander", "Porgy", "Butterfish", "Tilefish", "Tautog", "Cobia", "Sea Cucumber", "Amberjack",
+      "Jellyfish", "Lobster Tail", "Catfish Fillet", "Tilapia Fillet", "Swordfish Steaks", "Grilled Salmon", "Freshwater Fish",
+      "Shrimp Cocktail", "King Crab", "Grilled Lobster", "Baked Cod", "Baked Trout", "Poached Salmon", "Fish Tacos", "Tuna Tartare",
+      "Mussels in White Wine", "Baked Halibut", "Fried Clams", "Grilled Fish", "Fried Shrimp", "Fish Stew", "Grilled Mahi-Mahi",
+      "Poached Cod", "Seared Scallops", "Clam Chowder", "Fish Cakes", "Shrimp Scampi", "Mussels with Garlic", "Fish Soup", "Seafood Paella"
+    ];
+
+    // Function to display ingredient buttons
     function displayIngredients() {
       const categories = [
         { name: "vegetables", data: vegetables },
@@ -207,3 +223,4 @@
   </script>
 </body>
 </html>
+
