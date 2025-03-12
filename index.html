@@ -3,103 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farm to Table Quest</title>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <title>Farm-to-Table Game</title>
     <style>
         body {
-            margin: 0;
-            overflow: hidden;
-            background-color: #87CEEB;
             font-family: Arial, sans-serif;
-            color: white;
-        }
-        .button-container {
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff;
             display: flex;
             justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
         }
-        .button {
-            font-size: 20px;
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #4caf50;
+        }
+        button {
+            background-color: #4caf50;
             color: white;
-            padding: 10px 20px;
+            font-size: 1.2rem;
+            padding: 15px;
             margin: 10px;
-            background-color: #007BFF;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
-        .button:hover {
-            background-color: #0056b3;
+        button:hover {
+            background-color: #45a049;
         }
-        #status {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 24px;
-            color: white;
+        .emoji {
+            font-size: 2.5rem;
+            margin: 20px;
+        }
+        .result {
+            font-size: 1.5rem;
+            color: #333;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .game-container {
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div id="status">
-        <h2>Farm to Table Quest 🌾🍽️</h2>
-        <p>Click below to grow, harvest, and cook your crops! 👩‍🌾👨‍🍳</p>
-    </div>
-    <div class="button-container">
-        <button class="button" id="plantBtn">🌱 Plant Crop</button>
-        <button class="button" id="harvestBtn" disabled>🌾 Harvest Crop</button>
-        <button class="button" id="cookBtn" disabled>🍳 Cook Dish</button>
+    <div class="game-container">
+        <h1>Farm-to-Table Game</h1>
+        <p>Choose a food item to cook and serve!</p>
+        
+        <div class="emoji">
+            <button onclick="makeDish('🍅 Tomatoes')">🍅 Tomatoes</button>
+            <button onclick="makeDish('🥕 Carrots')">🥕 Carrots</button>
+            <button onclick="makeDish('🌽 Corn')">🌽 Corn</button>
+            <button onclick="makeDish('🥔 Potatoes')">🥔 Potatoes</button>
+        </div>
+        
+        <div class="result" id="result"></div>
     </div>
 
     <script>
-        // State variables to track the game progress
-        let cropPlanted = false;
-        let cropHarvested = false;
-        let dishCooked = false;
+        function makeDish(food) {
+            const result = document.getElementById('result');
+            let resultText = '';
 
-        // DOM elements for buttons
-        const plantButton = document.getElementById("plantBtn");
-        const harvestButton = document.getElementById("harvestBtn");
-        const cookButton = document.getElementById("cookBtn");
-
-        // Function to handle planting a crop
-        plantButton.addEventListener("click", function() {
-            if (!cropPlanted) {
-                cropPlanted = true;
-                document.body.style.backgroundColor = "#F0E68C";  // Change background to show planting activity
-                document.getElementById("status").innerHTML = "<h2>🌱 Crop planted! Wait for it to grow.</h2>";
-                plantButton.disabled = true;
-                harvestButton.disabled = false;
+            switch(food) {
+                case '🍅 Tomatoes':
+                    resultText = 'You selected Tomatoes! 🍅 A healthy start!';
+                    break;
+                case '🥕 Carrots':
+                    resultText = 'You selected Carrots! 🥕 Packed with vitamins!';
+                    break;
+                case '🌽 Corn':
+                    resultText = 'You selected Corn! 🌽 A tasty and filling choice!';
+                    break;
+                case '🥔 Potatoes':
+                    resultText = 'You selected Potatoes! 🥔 Comfort food at its finest!';
+                    break;
+                default:
+                    resultText = 'Please select a food item.';
             }
-        });
 
-        // Function to handle harvesting the crop
-        harvestButton.addEventListener("click", function() {
-            if (cropPlanted && !cropHarvested) {
-                cropHarvested = true;
-                document.body.style.backgroundColor = "#98FB98";  // Change background to show harvest activity
-                document.getElementById("status").innerHTML = "<h2>🌾 Crop harvested! Time to cook.</h2>";
-                harvestButton.disabled = true;
-                cookButton.disabled = false;
-            } else if (!cropPlanted) {
-                document.getElementById("status").innerHTML = "<h2>❗ You need to plant a crop first!</h2>";
-            }
-        });
-
-        // Function to handle cooking the dish
-        cookButton.addEventListener("click", function() {
-            if (cropHarvested && !dishCooked) {
-                dishCooked = true;
-                document.body.style.backgroundColor = "#FFD700";  // Change background to show cooking activity
-                document.getElementById("status").innerHTML = "<h2>🍳 Dish is cooked and ready to serve! Enjoy! 🍽️</h2>";
-                cookButton.disabled = true;
-            } else if (!cropHarvested) {
-                document.getElementById("status").innerHTML = "<h2>❗ You need to harvest the crop before cooking!</h2>";
-            }
-        });
+            result.textContent = resultText;
+        }
     </script>
 </body>
 </html>
