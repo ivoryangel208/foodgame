@@ -5,70 +5,163 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cooking Game</title>
     <style>
-        /* Basic styling */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
             padding: 20px;
+            margin: 0;
+            box-sizing: border-box;
         }
+
+        h1 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+
+        h2 {
+            font-size: 28px;
+            color: #444;
+            margin-bottom: 10px;
+        }
+
+        .section {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
         .button {
-            padding: 10px;
+            padding: 12px 25px;
             background-color: #4CAF50;
             color: white;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
-            margin: 10px 0;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin: 5px;
         }
+
         .button:hover {
             background-color: #45a049;
         }
-        .inventory-item {
-            padding: 10px;
-            background-color: #e0e0e0;
-            margin: 5px 0;
+
+        .button:active {
+            background-color: #3e8e41;
         }
-        .ingredient-description {
-            padding: 5px;
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        input[readonly], textarea[readonly] {
             background-color: #f9f9f9;
-            border: 1px solid #ccc;
+        }
+
+        #ingredient-description {
+            font-size: 16px;
             margin-top: 10px;
+            padding: 10px;
+            background-color: #e9f7e7;
+            border: 1px solid #d4e4d1;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .inventory-item {
+            background-color: #e9f7e7;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        .inventory {
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #total-money {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .dish-info {
+            margin-bottom: 15px;
+        }
+
+        .dish-info h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .inventory-list {
+            padding-left: 20px;
+        }
+
+        .inventory-list li {
+            font-size: 16px;
+        }
+
+        #inventory {
+            display: none;
         }
     </style>
 </head>
 <body>
     <h1>Cooking Game</h1>
-    <div>
+    
+    <div class="section">
         <h2>Create Dish</h2>
-        <label for="dish-name">Dish Name:</label>
-        <input type="text" id="dish-name" readonly><br>
+        <div class="dish-info">
+            <h3>Dish Name:</h3>
+            <input type="text" id="dish-name" readonly>
+        </div>
+        <div class="dish-info">
+            <h3>Dish Price ($):</h3>
+            <input type="number" id="dish-price" readonly>
+        </div>
+        <div class="dish-info">
+            <h3>Dish Description:</h3>
+            <textarea id="dish-description" readonly></textarea>
+        </div>
+        <div class="dish-info">
+            <h3>Dish Rating (1-5):</h3>
+            <input type="number" id="dish-rating" min="1" max="5" readonly>
+        </div>
         
-        <label for="dish-price">Dish Price ($):</label>
-        <input type="number" id="dish-price" readonly><br>
-
-        <label for="dish-description">Dish Description:</label>
-        <textarea id="dish-description" readonly></textarea><br>
-
-        <label for="dish-rating">Dish Rating (1-5):</label>
-        <input type="number" id="dish-rating" min="1" max="5" readonly><br>
-
         <h3>Add Ingredients:</h3>
         <button class="button" id="add-meat">Add Exotic Meat</button>
         <button class="button" id="add-fish">Add Exotic Fish</button>
         <button class="button" id="add-plant">Add Exotic Plant</button>
-        <div id="ingredient-description" class="ingredient-description" style="display:none;"></div>
+        
+        <div id="ingredient-description"></div>
+        
         <br>
         <button class="button" id="create-dish">Create Dish</button>
         <button class="button" id="sell-dish">Sell Dish</button>
     </div>
 
-    <h2>Inventory</h2>
-    <button class="button" id="toggle-inventory">Show Inventory</button>
-    <div id="inventory" style="display:none;">
-        <h3>Dish Inventory</h3>
-        <ul id="inventory-list"></ul>
+    <div class="section inventory">
+        <h2>Inventory</h2>
+        <button class="button" id="toggle-inventory">Show Inventory</button>
+        <ul id="inventory-list" class="inventory-list"></ul>
+        <h3>Total Money: $<span id="total-money">0.00</span></h3>
     </div>
-
-    <h3>Total Money: $<span id="total-money">0.00</span></h3>
 
     <script>
         // Game Variables
@@ -107,60 +200,54 @@
         ];
 
         // Ingredients Lists
-        const exoticMeats = ["Venison", "Bison", "Kangaroo", "Camel", "Alligator", "Ostrich", "Pigeon", "Boar", "Frog Legs", "Elk", "Yak", "Zebra", "Crocodile", "Antelope", "Wild Boar", "Guinea Fowl", "Quail", "Pheasant", "Rabbit", "Swan"];
-        const exoticFish = ["Swordfish", "Tuna", "Bluefin Tuna", "Halibut", "King Salmon", "Sturgeon", "Mahi Mahi", "Wahoo", "Bass", "Pike", "Barracuda", "Snapper", "Swordfish", "Flounder", "Tilapia", "Anchovy", "Herring", "Pollock", "Sardines", "Chilean Sea Bass"];
-        const exoticPlants = ["Truffle", "Saffron", "Wasabi", "Coriander", "Fennel", "Kaffir Lime", "Mango Leaves", "Dragon Fruit", "Durian", "Ginseng", "Bamboo Shoots", "Elderflower", "Lavender", "Chili Pepper", "Cilantro", "Lemongrass", "Turmeric", "Lime Zest", "Coconut", "Mint"];
+        const exoticMeats = ["Venison", "Bison", "Kangaroo", "Camel", "Alligator", "Ostrich", "Pigeon", "Boar", "Frog Legs", "Elk", "Wagyu Beef", "Goose", "Duck", "Quail", "Rabbit", "Wild Turkey", "Buffalo", "Squirrel", "Wild Boar", "Reindeer"];
+        const exoticFish = ["Swordfish", "Tuna", "Salmon", "Snapper", "Mahi Mahi", "Yellowtail", "Barracuda", "Halibut", "Grouper", "Octopus", "Scallops", "Sea Bass", "Tilapia", "Caviar", "Abalone", "King Crab", "Lobster", "Rockfish", "Eel", "Shrimp"];
+        const exoticPlants = ["Dragon Fruit", "Durian", "Mangosteen", "Taro", "Kale", "Wasabi", "Sichuan Pepper", "Fiddlehead Fern", "Cucumber", "Coriander", "Yams", "Okra", "Bamboo Shoots", "Lotus Root", "Jalapeño", "Chili Peppers", "Fennel", "Artichokes", "Squash", "Sweet Potatoes"];
 
         // DOM Elements
-        const totalMoneySpan = document.getElementById('total-money');
-        const inventoryList = document.getElementById('inventory-list');
         const dishNameInput = document.getElementById('dish-name');
         const dishPriceInput = document.getElementById('dish-price');
         const dishDescriptionInput = document.getElementById('dish-description');
         const dishRatingInput = document.getElementById('dish-rating');
         const ingredientDescriptionText = document.getElementById('ingredient-description');
-        const inventorySection = document.getElementById('inventory');
+        const createDishButton = document.getElementById('create-dish');
+        const sellDishButton = document.getElementById('sell-dish');
+        const inventoryList = document.getElementById('inventory-list');
+        const totalMoneySpan = document.getElementById('total-money');
         const toggleInventoryButton = document.getElementById('toggle-inventory');
-        
-        // Button Event Listeners
+
+        // Event Listeners
         document.getElementById('add-meat').addEventListener('click', () => addIngredient('meat'));
         document.getElementById('add-fish').addEventListener('click', () => addIngredient('fish'));
         document.getElementById('add-plant').addEventListener('click', () => addIngredient('plant'));
-        document.getElementById('create-dish').addEventListener('click', createDish);
-        document.getElementById('sell-dish').addEventListener('click', sellDish);
+        createDishButton.addEventListener('click', createDish);
+        sellDishButton.addEventListener('click', sellDish);
         toggleInventoryButton.addEventListener('click', toggleInventory);
 
         // Functions
+        function toggleInventory() {
+            document.getElementById('inventory').style.display = document.getElementById('inventory').style.display === 'none' ? 'block' : 'none';
+        }
+
         function addIngredient(type) {
-            let ingredientList = [];
-            let ingredientType = '';
-            if (type === 'meat') {
-                ingredientList = exoticMeats;
-                ingredientType = 'Meat';
-            } else if (type === 'fish') {
-                ingredientList = exoticFish;
-                ingredientType = 'Fish';
-            } else if (type === 'plant') {
-                ingredientList = exoticPlants;
-                ingredientType = 'Plant';
-            }
-            
-            // Randomly pick an ingredient
-            const randomIngredient = ingredientList[Math.floor(Math.random() * ingredientList.length)];
+            let ingredientsList;
+            if (type === 'meat') ingredientsList = exoticMeats;
+            else if (type === 'fish') ingredientsList = exoticFish;
+            else if (type === 'plant') ingredientsList = exoticPlants;
+
+            const randomIngredient = ingredientsList[Math.floor(Math.random() * ingredientsList.length)];
             currentDish.ingredients.push(randomIngredient);
-            ingredientDescriptionText.textContent = `${ingredientType} Added: ${randomIngredient}`;
             ingredientDescriptionText.style.display = 'block';
+            ingredientDescriptionText.textContent = `You added: ${randomIngredient}`;
         }
 
         function createDish() {
-            // Select a random dish from the predefined list
             const randomDish = dishData[Math.floor(Math.random() * dishData.length)];
             currentDish.name = randomDish.name;
             currentDish.price = randomDish.price;
             currentDish.description = randomDish.description;
             currentDish.rating = randomDish.rating;
 
-            // Update the inputs
             dishNameInput.value = currentDish.name;
             dishPriceInput.value = currentDish.price;
             dishDescriptionInput.value = currentDish.description;
@@ -168,33 +255,35 @@
         }
 
         function sellDish() {
-            // Add the current dish to inventory and update total money
-            inventory.push(currentDish);
-            totalMoney += currentDish.price;
-            updateMoney();
-            currentDish = { name: '', price: 0, description: '', rating: 0, ingredients: [] };
-            alert("Dish Sold!");
+            if (currentDish.price === 0) {
+                alert("Please create a dish first!");
+                return;
+            }
 
-            // Update the inventory list
-            updateInventory();
+            inventory.push({...currentDish});
+            totalMoney += currentDish.price;
+            totalMoneySpan.textContent = totalMoney.toFixed(2);
+            updateInventoryDisplay();
+            resetCurrentDish();
         }
 
-        function updateInventory() {
+        function updateInventoryDisplay() {
             inventoryList.innerHTML = '';
-            inventory.forEach(dish => {
-                const li = document.createElement('li');
-                li.classList.add('inventory-item');
-                li.textContent = `${dish.name} - $${dish.price} | Rating: ${dish.rating} | Ingredients: ${dish.ingredients.join(', ')}`;
-                inventoryList.appendChild(li);
+            inventory.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.className = 'inventory-item';
+                listItem.textContent = `${item.name} - $${item.price} - Rating: ${item.rating} stars`;
+                inventoryList.appendChild(listItem);
             });
         }
 
-        function updateMoney() {
-            totalMoneySpan.textContent = totalMoney.toFixed(2);
-        }
-
-        function toggleInventory() {
-            inventorySection.style.display = (inventorySection.style.display === 'none') ? 'block' : 'none';
+        function resetCurrentDish() {
+            currentDish = { name: '', price: 0, description: '', rating: 0, ingredients: [] };
+            dishNameInput.value = '';
+            dishPriceInput.value = '';
+            dishDescriptionInput.value = '';
+            dishRatingInput.value = '';
+            ingredientDescriptionText.style.display = 'none';
         }
     </script>
 </body>
