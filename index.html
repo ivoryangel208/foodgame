@@ -7,8 +7,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
             background-color: #f4f4f4;
+            padding: 20px;
         }
         button {
             padding: 10px;
@@ -21,26 +21,25 @@
         button:hover {
             background-color: #45a049;
         }
-        .dish-list, .inventory {
+        .dish-list {
             margin-top: 20px;
         }
-        .dish, .inventory-item {
-            margin: 10px;
+        .dish {
+            background-color: #e0e0e0;
             padding: 10px;
-            background-color: #f9f9f9;
+            margin: 10px 0;
             border-radius: 5px;
-        }
-        .inventory {
-            display: none;
         }
     </style>
 </head>
 <body>
 
     <h1>Dish Creation Game</h1>
+    <label for="dish-name">Dish Name:</label>
     <input type="text" id="dish-name" placeholder="Enter dish name" />
     <button id="create-dish">Create Dish</button>
-    <button id="inventory-btn">View Inventory</button>
+    <button id="view-inventory">View Inventory</button>
+
     <div id="ingredient-section">
         <button id="add-meat">Add Meat</button>
         <button id="add-fish">Add Fish</button>
@@ -48,38 +47,37 @@
     </div>
 
     <div id="dish-list" class="dish-list"></div>
-    <div id="inventory" class="inventory">
+    <div id="inventory" style="display: none;">
         <h3>Inventory</h3>
-        <div id="inventory-items"></div>
+        <div id="inventory-list"></div>
     </div>
 
     <script>
-        // Predefined data for ingredients, prices, ratings, and descriptions
-        const meats = ["Beef", "Chicken", "Pork", "Lamb", "Venison"];
-        const fishes = ["Salmon", "Tuna", "Trout", "Cod", "Mackerel"];
-        const plants = ["Carrot", "Potato", "Spinach", "Lettuce", "Tomato"];
+        const meats = ["Beef", "Chicken", "Pork", "Lamb"];
+        const fishes = ["Salmon", "Tuna", "Trout", "Cod"];
+        const plants = ["Carrot", "Potato", "Spinach", "Tomato"];
 
         const descriptions = [
             "A hearty and delicious dish.",
             "A unique blend of flavors.",
             "A fresh, healthy choice.",
-            "A comfort food favorite.",
-            "A spicy, bold dish."
+            "A comfort food favorite."
         ];
-        const prices = [10, 15, 20, 25, 30];
+        const prices = [10, 15, 20, 25];
         const ratings = [1, 2, 3, 4, 5];
 
         let inventory = [];
-        let earnings = 0;
+        let currentDish = null;
 
-        // Elements
         const dishNameInput = document.getElementById('dish-name');
         const createDishButton = document.getElementById('create-dish');
-        const inventoryButton = document.getElementById('inventory-btn');
-        const ingredientSection = document.getElementById('ingredient-section');
+        const viewInventoryButton = document.getElementById('view-inventory');
+        const addMeatButton = document.getElementById('add-meat');
+        const addFishButton = document.getElementById('add-fish');
+        const addPlantButton = document.getElementById('add-plant');
         const dishList = document.getElementById('dish-list');
+        const inventoryList = document.getElementById('inventory-list');
         const inventorySection = document.getElementById('inventory');
-        const inventoryItems = document.getElementById('inventory-items');
 
         // Create Dish
         createDishButton.addEventListener('click', function () {
@@ -94,87 +92,83 @@
             const description = descriptions[Math.floor(Math.random() * descriptions.length)];
             const rating = ratings[Math.floor(Math.random() * ratings.length)];
 
-            const ingredients = [];
-
             const dish = {
                 name: dishName,
                 price: price,
                 description: description,
                 rating: rating,
-                ingredients: ingredients
+                ingredients: []
             };
 
-            // Create and display the dish
+            currentDish = dish;
+
+            // Display the dish creation UI
             const dishDiv = document.createElement('div');
             dishDiv.classList.add('dish');
             dishDiv.innerHTML = `
-                <strong>${dishName}</strong><br>
+                <strong>${dish.name}</strong><br>
                 Price: $${price}<br>
                 Rating: ${rating} stars<br>
                 Description: ${description}<br>
-                Ingredients: ${ingredients.join(', ') || "None"}<br>
+                Ingredients: ${dish.ingredients.join(', ') || "None"}<br>
                 <button onclick="sellDish(${price})">Sell for $${price}</button>
             `;
-
             dishList.appendChild(dishDiv);
-            dishNameInput.value = ""; // Reset input field
+
+            // Reset the input field
+            dishNameInput.value = "";
         });
 
-        // Add ingredient functions
-        document.getElementById('add-meat').addEventListener('click', function () {
-            addIngredient(meats, "meat");
-        });
-        document.getElementById('add-fish').addEventListener('click', function () {
-            addIngredient(fishes, "fish");
-        });
-        document.getElementById('add-plant').addEventListener('click', function () {
-            addIngredient(plants, "plant");
+        // Add ingredients to current dish
+        addMeatButton.addEventListener('click', function () {
+            addIngredient(meats);
         });
 
-        function addIngredient(ingredientArray, type) {
-            const dishName = dishNameInput.value;
-            if (!dishName) {
+        addFishButton.addEventListener('click', function () {
+            addIngredient(fishes);
+        });
+
+        addPlantButton.addEventListener('click', function () {
+            addIngredient(plants);
+        });
+
+        function addIngredient(ingredientArray) {
+            if (!currentDish) {
                 alert("Please create a dish first.");
                 return;
             }
             const randomIngredient = ingredientArray[Math.floor(Math.random() * ingredientArray.length)];
+            currentDish.ingredients.push(randomIngredient);
 
-            // Find the created dish by name
-            const dish = Array.from(dishList.children).find(dish => dish.querySelector('strong').textContent === dishName);
-
-            // Add the ingredient to the dish's ingredients array and display it
-            if (dish) {
-                const ingredientsList = dish.querySelector('Ingredients');
-                if (ingredientsList) {
-                    ingredientsList.textContent += `, ${randomIngredient}`;
-                } else {
-                    dish.innerHTML += `Ingredients: ${randomIngredient}<br>`;
-                }
-            }
+            // Update the dish display with new ingredients
+            const dishDiv = dishList.querySelector('.dish');
+            dishDiv.innerHTML = `
+                <strong>${currentDish.name}</strong><br>
+                Price: $${currentDish.price}<br>
+                Rating: ${currentDish.rating} stars<br>
+                Description: ${currentDish.description}<br>
+                Ingredients: ${currentDish.ingredients.join(', ')}<br>
+                <button onclick="sellDish(${currentDish.price})">Sell for $${currentDish.price}</button>
+            `;
         }
 
-        // Sell Dish Function
+        // Sell the dish
         function sellDish(price) {
-            earnings += price;
+            inventory.push(currentDish);
             alert("Dish sold! You earned $" + price);
-            displayEarnings();
+            displayInventory();
         }
 
-        function displayEarnings() {
-            alert("Total Earnings: $" + earnings);
-        }
-
-        // View Inventory
-        inventoryButton.addEventListener('click', function () {
+        // View inventory
+        viewInventoryButton.addEventListener('click', function () {
             inventorySection.style.display = inventorySection.style.display === "none" ? "block" : "none";
         });
 
-        // Displaying all dishes in the inventory
+        // Display inventory
         function displayInventory() {
-            inventoryItems.innerHTML = "";
+            inventoryList.innerHTML = "";
             inventory.forEach(dish => {
                 const dishDiv = document.createElement('div');
-                dishDiv.classList.add('inventory-item');
                 dishDiv.innerHTML = `
                     <strong>${dish.name}</strong><br>
                     Price: $${dish.price}<br>
@@ -182,7 +176,7 @@
                     Description: ${dish.description}<br>
                     Ingredients: ${dish.ingredients.join(", ")}
                 `;
-                inventoryItems.appendChild(dishDiv);
+                inventoryList.appendChild(dishDiv);
             });
         }
     </script>
