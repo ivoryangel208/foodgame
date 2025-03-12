@@ -7,26 +7,29 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
             margin: 0;
             padding: 0;
-            background-color: #f0f8ff;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
         }
         h1 {
-            text-align: center;
             font-size: 2.5rem;
-            margin-bottom: 20px;
-            color: #4caf50;
+            color: #2e7d32;
+        }
+        p {
+            font-size: 1.2rem;
+            color: #333;
         }
         button {
-            background-color: #4caf50;
+            background-color: #388e3c;
             color: white;
             font-size: 1.2rem;
-            padding: 15px;
+            padding: 10px 20px;
             margin: 10px;
             border: none;
             border-radius: 5px;
@@ -34,89 +37,84 @@
             transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #4caf50;
         }
         .emoji {
-            font-size: 2.5rem;
-            margin: 20px;
+            font-size: 3rem;
+            margin: 15px;
         }
-        .result {
+        #result {
             font-size: 1.5rem;
             color: #333;
-            text-align: center;
             margin-top: 20px;
-        }
-        .game-container {
-            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <h1>Farm-to-Table Game</h1>
-        <p>Choose a food item to cook and serve!</p>
-        
-        <!-- Food selection buttons -->
-        <div class="emoji">
-            <button onclick="makeDish('🍅 Tomatoes')">🍅 Tomatoes</button>
-            <button onclick="makeDish('🥕 Carrots')">🥕 Carrots</button>
-            <button onclick="makeDish('🌽 Corn')">🌽 Corn</button>
-            <button onclick="makeDish('🥔 Potatoes')">🥔 Potatoes</button>
-        </div>
-        
-        <p>Choose how you want to cook the food!</p>
-        
-        <!-- Cooking action buttons -->
-        <div class="emoji">
-            <button onclick="actionChoice('Grill')">Grill</button>
-            <button onclick="actionChoice('Boil')">Boil</button>
-            <button onclick="actionChoice('Fry')">Fry</button>
-            <button onclick="actionChoice('Steam')">Steam</button>
-        </div>
 
-        <p>Choose a utensil to serve the food!</p>
-        
-        <!-- Utensil choice buttons -->
-        <div class="emoji">
-            <button onclick="utensilChoice('Plate')">Plate</button>
-            <button onclick="utensilChoice('Bowl')">Bowl</button>
-            <button onclick="utensilChoice('Cup')">Cup</button>
-        </div>
+    <h1>Farm-to-Table Game</h1>
+    <p>Choose a food item, then a cooking action, and finally a utensil to serve it!</p>
 
-        <!-- Result section -->
-        <div class="result" id="result"></div>
+    <div id="food-buttons">
+        <button onclick="selectFood('🍅 Tomatoes')">🍅 Tomatoes</button>
+        <button onclick="selectFood('🥕 Carrots')">🥕 Carrots</button>
+        <button onclick="selectFood('🌽 Corn')">🌽 Corn</button>
+        <button onclick="selectFood('🥔 Potatoes')">🥔 Potatoes</button>
     </div>
+
+    <div id="action-buttons" style="display: none;">
+        <p>How do you want to cook the food?</p>
+        <button onclick="selectAction('Grill')">Grill</button>
+        <button onclick="selectAction('Boil')">Boil</button>
+        <button onclick="selectAction('Fry')">Fry</button>
+        <button onclick="selectAction('Steam')">Steam</button>
+    </div>
+
+    <div id="utensil-buttons" style="display: none;">
+        <p>How do you want to serve it?</p>
+        <button onclick="selectUtensil('Plate')">Plate</button>
+        <button onclick="selectUtensil('Bowl')">Bowl</button>
+        <button onclick="selectUtensil('Cup')">Cup</button>
+    </div>
+
+    <div id="result"></div>
 
     <script>
         let selectedFood = '';
         let selectedAction = '';
         let selectedUtensil = '';
-        
-        // Function for food selection
-        function makeDish(food) {
+
+        // Select food item
+        function selectFood(food) {
             selectedFood = food;
-            document.getElementById('result').textContent = `You selected ${food}! Let's cook it!`;
+            document.getElementById('food-buttons').style.display = 'none';
+            document.getElementById('action-buttons').style.display = 'block';
+            document.getElementById('result').textContent = `You selected ${food}. Now, how do you want to cook it?`;
         }
 
-        // Function for cooking action
-        function actionChoice(action) {
+        // Select cooking action
+        function selectAction(action) {
             if (!selectedFood) {
                 document.getElementById('result').textContent = 'Please select a food item first!';
                 return;
             }
             selectedAction = action;
-            document.getElementById('result').textContent = `You decided to ${action} the ${selectedFood}!`;
+            document.getElementById('action-buttons').style.display = 'none';
+            document.getElementById('utensil-buttons').style.display = 'block';
+            document.getElementById('result').textContent = `You decided to ${action} the ${selectedFood}. Now, how do you want to serve it?`;
         }
 
-        // Function for utensil choice
-        function utensilChoice(utensil) {
+        // Select serving utensil
+        function selectUtensil(utensil) {
             if (!selectedAction) {
                 document.getElementById('result').textContent = 'Please choose a cooking action first!';
                 return;
             }
             selectedUtensil = utensil;
-            document.getElementById('result').textContent = `You served the ${selectedFood} on a ${utensil} after ${selectedAction}.`;
+            document.getElementById('utensil-buttons').style.display = 'none';
+            document.getElementById('result').textContent = `You served the ${selectedFood} on a ${utensil} after ${selectedAction}. Enjoy!`;
         }
     </script>
+
 </body>
 </html>
