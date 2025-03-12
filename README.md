@@ -63,34 +63,53 @@
             <button onclick="makeDish('🥔 Potatoes')">🥔 Potatoes</button>
         </div>
         
+        <p>Choose how you want to cook the food!</p>
+        
+        <div class="emoji">
+            <button onclick="actionChoice('Grill')">Grill</button>
+            <button onclick="actionChoice('Boil')">Boil</button>
+            <button onclick="actionChoice('Fry')">Fry</button>
+            <button onclick="actionChoice('Steam')">Steam</button>
+        </div>
+
+        <p>Choose a utensil to serve the food!</p>
+        
+        <div class="emoji">
+            <button onclick="utensilChoice('Plate')">Plate</button>
+            <button onclick="utensilChoice('Bowl')">Bowl</button>
+            <button onclick="utensilChoice('Cup')">Cup</button>
+        </div>
+
         <div class="result" id="result"></div>
     </div>
 
     <script>
+        let selectedFood = '';
+        let selectedAction = '';
+        let selectedUtensil = '';
+        
         function makeDish(food) {
-            const result = document.getElementById('result');
-            let resultText = '';
+            selectedFood = food;
+            document.getElementById('result').textContent = `You selected ${food}! Let's cook it!`;
+        }
 
-            switch(food) {
-                case '🍅 Tomatoes':
-                    resultText = 'You selected Tomatoes! 🍅 A healthy start!';
-                    break;
-                case '🥕 Carrots':
-                    resultText = 'You selected Carrots! 🥕 Packed with vitamins!';
-                    break;
-                case '🌽 Corn':
-                    resultText = 'You selected Corn! 🌽 A tasty and filling choice!';
-                    break;
-                case '🥔 Potatoes':
-                    resultText = 'You selected Potatoes! 🥔 Comfort food at its finest!';
-                    break;
-                default:
-                    resultText = 'Please select a food item.';
+        function actionChoice(action) {
+            if (!selectedFood) {
+                document.getElementById('result').textContent = 'Please select a food item first!';
+                return;
             }
+            selectedAction = action;
+            document.getElementById('result').textContent = `You decided to ${action} the ${selectedFood}!`;
+        }
 
-            result.textContent = resultText;
+        function utensilChoice(utensil) {
+            if (!selectedAction) {
+                document.getElementById('result').textContent = 'Please choose a cooking action first!';
+                return;
+            }
+            selectedUtensil = utensil;
+            document.getElementById('result').textContent = `You served the ${selectedFood} on a ${utensil} after ${selectedAction}.`;
         }
     </script>
 </body>
 </html>
-
