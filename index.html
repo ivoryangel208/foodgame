@@ -56,6 +56,7 @@
         <h1>Farm-to-Table Game</h1>
         <p>Choose a food item to cook and serve!</p>
         
+        <!-- Food selection buttons -->
         <div class="emoji">
             <button onclick="makeDish('🍅 Tomatoes')">🍅 Tomatoes</button>
             <button onclick="makeDish('🥕 Carrots')">🥕 Carrots</button>
@@ -65,6 +66,7 @@
         
         <p>Choose how you want to cook the food!</p>
         
+        <!-- Cooking action buttons -->
         <div class="emoji">
             <button onclick="actionChoice('Grill')">Grill</button>
             <button onclick="actionChoice('Boil')">Boil</button>
@@ -74,12 +76,14 @@
 
         <p>Choose a utensil to serve the food!</p>
         
+        <!-- Utensil choice buttons -->
         <div class="emoji">
             <button onclick="utensilChoice('Plate')">Plate</button>
             <button onclick="utensilChoice('Bowl')">Bowl</button>
             <button onclick="utensilChoice('Cup')">Cup</button>
         </div>
 
+        <!-- Result section -->
         <div class="result" id="result"></div>
     </div>
 
@@ -88,11 +92,13 @@
         let selectedAction = '';
         let selectedUtensil = '';
         
+        // Function for food selection
         function makeDish(food) {
             selectedFood = food;
             document.getElementById('result').textContent = `You selected ${food}! Let's cook it!`;
         }
 
+        // Function for cooking action
         function actionChoice(action) {
             if (!selectedFood) {
                 document.getElementById('result').textContent = 'Please select a food item first!';
@@ -102,6 +108,7 @@
             document.getElementById('result').textContent = `You decided to ${action} the ${selectedFood}!`;
         }
 
+        // Function for utensil choice
         function utensilChoice(utensil) {
             if (!selectedAction) {
                 document.getElementById('result').textContent = 'Please choose a cooking action first!';
