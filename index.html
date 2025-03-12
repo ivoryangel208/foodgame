@@ -98,6 +98,18 @@
         .ingredient-button {
             background-color: #3498db;
         }
+
+        .ingredient-description {
+            font-size: 12px;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .ingredient-list {
+            text-align: left;
+            margin-top: 20px;
+        }
+
     </style>
 </head>
 <body>
@@ -125,6 +137,12 @@
     <button id="saveDishButton" class="ingredient-button">💾 Save Dish</button>
 </div>
 
+<!-- Ingredient Descriptions -->
+<div id="ingredientDescriptions" class="ingredient-list" style="display: none;">
+    <h2>🍽️ Ingredient Descriptions</h2>
+    <p id="ingredientText"></p>
+</div>
+
 <!-- Inventory Section -->
 <div class="inventory-title">🍲 Your Dishes</div>
 <div class="inventory" id="inventory"></div>
@@ -137,11 +155,33 @@
     let currentDish = { name: "", ingredients: [], description: "", price: 0, rating: 0 };
     let inventory = [];
 
-    // Exotic Ingredients
+    // Exotic Ingredients and Descriptions
     const ingredients = {
-        meats: ["Kangaroo 🦘", "Bison 🐃", "Ostrich 🦢", "Alpaca 🦙", "Venison 🦌", "Wild Boar 🐗", "Camel 🐪", "Crocodile 🐊", "Emu 🦩", "Alligator 🐊"],
-        fish: ["Tuna 🐟", "Swordfish 🗡️🐟", "Piranha 🐠", "Salmon 🐟", "Mahi Mahi 🐟", "Octopus 🐙", "Snapper 🐟", "Barracuda 🐟", "Tarpan 🐟", "Anglerfish 🐟"],
-        plants: ["Edible Flowers 🌸", "Wild Herbs 🌿", "Ginger 🌱", "Saffron 🌺", "Kale 🥬", "Lavender 🌸", "Truffles 🍄", "Chili Peppers 🌶️", "Bamboo Shoots 🎋", "Mushrooms 🍄"]
+        meats: [
+            { name: "Kangaroo 🦘", description: "A lean and tender meat, often cooked on the grill. Known for its unique flavor and rich protein content." },
+            { name: "Bison 🐃", description: "A rich and flavorful red meat, lower in fat than beef, often used in gourmet dishes." },
+            { name: "Ostrich 🦢", description: "An exotic, tender, and lean red meat, often compared to beef in flavor but much lighter." },
+            { name: "Alpaca 🦙", description: "A mild-flavored meat that’s lean, tender, and nutritious, similar to lamb." },
+            { name: "Venison 🦌", description: "A flavorful, gamey meat often enjoyed in stews or grilled. It’s rich in protein and low in fat." },
+            { name: "Wild Boar 🐗", description: "A dark, rich meat with a bold flavor, perfect for hearty dishes like stews and roasts." },
+            { name: "Camel 🐪", description: "A lean and slightly gamey meat, often used in Middle Eastern dishes." },
+            { name: "Crocodile 🐊", description: "A mild, white meat often compared to chicken or fish. Great for frying or grilling." }
+        ],
+        fish: [
+            { name: "Tuna 🐟", description: "A meaty fish, perfect for steaks or sushi. Known for its rich flavor and texture." },
+            { name: "Swordfish 🗡️🐟", description: "A dense, firm fish with a slightly sweet flavor, often grilled." },
+            { name: "Piranha 🐠", description: "A small but flavorful fish, popular in South American cuisines." },
+            { name: "Salmon 🐟", description: "A fatty fish with a distinct taste, often smoked, grilled, or baked." },
+            { name: "Mahi Mahi 🐟", description: "A mild fish with a slightly sweet flavor, perfect for grilling or sautéing." },
+            { name: "Octopus 🐙", description: "Tender and flavorful, this unique seafood is great in soups, salads, and grilled dishes." }
+        ],
+        plants: [
+            { name: "Edible Flowers 🌸", description: "Colorful and aromatic, these flowers add a beautiful touch to salads and desserts." },
+            { name: "Wild Herbs 🌿", description: "Fresh, aromatic herbs perfect for garnishing or adding flavor to dishes." },
+            { name: "Ginger 🌱", description: "A spicy, aromatic root commonly used in Asian cuisine, known for its health benefits." },
+            { name: "Saffron 🌺", description: "A luxurious and fragrant spice, often used in dishes like paella and risotto." },
+            { name: "Kale 🥬", description: "A hearty, leafy green packed with nutrients, perfect for soups or salads." }
+        ]
     };
 
     // Event Listeners
@@ -156,88 +196,81 @@
     const dishPriceInput = document.getElementById("dishPrice");
     const dishDescriptionInput = document.getElementById("dishDescription");
     const dishRatingInput = document.getElementById("dishRating");
+    const ingredientDescriptions = document.getElementById("ingredientDescriptions");
+    const ingredientText = document.getElementById("ingredientText");
 
     // Functions for adding ingredients
     addMeatButton.addEventListener("click", () => {
-        currentDish.ingredients.push(ingredients.meats[Math.floor(Math.random() * ingredients.meats.length)]);
-        alert("🍖 Added an exotic meat to your dish!");
+        const meat = ingredients.meats[Math.floor(Math.random() * ingredients.meats.length)];
+        currentDish.ingredients.push(meat.name);
+        ingredientText.innerHTML = `🦘 You added: ${meat.name}. ${meat.description}`;
+        ingredientDescriptions.style.display = "block";
     });
 
     addFishButton.addEventListener("click", () => {
-        currentDish.ingredients.push(ingredients.fish[Math.floor(Math.random() * ingredients.fish.length)]);
-        alert("🐟 Added an exotic fish to your dish!");
+        const fish = ingredients.fish[Math.floor(Math.random() * ingredients.fish.length)];
+        currentDish.ingredients.push(fish.name);
+        ingredientText.innerHTML = `🐟 You added: ${fish.name}. ${fish.description}`;
+        ingredientDescriptions.style.display = "block";
     });
 
     addPlantButton.addEventListener("click", () => {
-        currentDish.ingredients.push(ingredients.plants[Math.floor(Math.random() * ingredients.plants.length)]);
-        alert("🌿 Added an exotic plant to your dish!");
+        const plant = ingredients.plants[Math.floor(Math.random() * ingredients.plants.length)];
+        currentDish.ingredients.push(plant.name);
+        ingredientText.innerHTML = `🌿 You added: ${plant.name}. ${plant.description}`;
+        ingredientDescriptions.style.display = "block";
     });
 
-    // Create Dish Button - Show dish creation section
     createDishButton.addEventListener("click", () => {
-        document.getElementById("dishCreationSection").style.display = "block";
-    });
-
-    // Save Dish Button - Save and add dish to inventory
-    saveDishButton.addEventListener("click", () => {
         const name = dishNameInput.value;
         const price = parseFloat(dishPriceInput.value);
         const description = dishDescriptionInput.value;
         const rating = parseInt(dishRatingInput.value);
-
-        if (name && price > 0 && description && rating >= 1 && rating <= 5) {
-            inventory.push({
-                name,
-                ingredients: [...currentDish.ingredients],
-                description,
-                price,
-                rating
-            });
-
-            currentDish = { name: "", ingredients: [], description: "", price: 0, rating: 0 };
-            dishNameInput.value = "";
-            dishPriceInput.value = "";
-            dishDescriptionInput.value = "";
-            dishRatingInput.value = "";
-
-            // Re-render Inventory
-            renderInventory();
-        } else {
-            alert("⚠️ Please fill in all fields correctly.");
+        
+        if (name && price && description && rating) {
+            currentDish.name = name;
+            currentDish.price = price;
+            currentDish.description = description;
+            currentDish.rating = rating;
+            
+            inventory.push(currentDish);
+            totalMoney += price;
+            updateInventory();
+            resetDishInputs();
         }
-
-        // Hide dish creation section after saving
-        document.getElementById("dishCreationSection").style.display = "none";
     });
 
-    // Render Inventory
-    function renderInventory() {
+    // Function to update the inventory display
+    function updateInventory() {
         inventoryDiv.innerHTML = "";
         inventory.forEach(dish => {
             const dishCard = document.createElement("div");
             dishCard.classList.add("dish-card");
-
             dishCard.innerHTML = `
                 <div class="dish-title">${dish.name}</div>
                 <div class="dish-description">${dish.description}</div>
-                <div class="price">💸 $${dish.price.toFixed(2)}</div>
-                <div class="dish-rating">⭐ Rating: ${dish.rating}/5</div>
-                <button class="sell-button" onclick="sellDish(${inventory.indexOf(dish)})">🛒 Sell</button>
-                <div class="ingredients">🥘 Ingredients: ${dish.ingredients.join(", ")}</div>
+                <div class="dish-rating">Rating: ${dish.rating} / 5</div>
+                <div class="price">Price: $${dish.price.toFixed(2)}</div>
+                <button class="sell-button" onclick="sellDish(${dish.price})">Sell</button>
             `;
             inventoryDiv.appendChild(dishCard);
         });
     }
 
-    // Sell Dish and Update Money
-    function sellDish(dishIndex) {
-        const dish = inventory[dishIndex];
-        totalMoney += dish.price;
-        totalMoneySpan.textContent = totalMoney.toFixed(2);
-        inventory.splice(dishIndex, 1);
-        renderInventory();
+    // Function to sell a dish and earn money
+    function sellDish(price) {
+        totalMoney += price;
+        totalMoneySpan.innerText = totalMoney.toFixed(2);
     }
 
+    // Reset dish inputs after creating a dish
+    function resetDishInputs() {
+        dishNameInput.value = "";
+        dishPriceInput.value = "";
+        dishDescriptionInput.value = "";
+        dishRatingInput.value = "";
+        ingredientDescriptions.style.display = "none";
+    }
 </script>
 
 </body>
