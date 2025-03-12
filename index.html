@@ -107,50 +107,71 @@
             "Beef", "Chicken", "Pork", "Lamb", "Venison", "Rabbit", "Goat", "Duck", "Bison", "Kangaroo", 
             "Turkey", "Boar", "Elk", "Emu", "Ostrich", "Quail", "Pheasant", "Goose", "Sausage", "Pastrami", 
             "Salami", "Pepperoni", "Jerky", "T-bone steak", "Ribs", "Liver", "Lamb chops", "Chicken wings", 
-            "Chicken breast", "Chicken thighs", "Duck breast", "Pork belly", "Ribeye", "Filet mignon", "Ground beef"
+            "Chicken breast", "Chicken thighs", "Duck breast", "Pork belly", "Ribeye", "Filet mignon", "Ground beef",
+            "Bacon", "Pork shoulder", "Beef brisket", "Short ribs", "Chorizo", "Mutton", "Tri-tip", "Flank steak", 
+            "Steak tips", "Chicken legs", "Chicken drumsticks", "Brisket", "Liverwurst", "Lamb leg", "Pulled pork", 
+            "Roast beef", "Corned beef", "Pork ribs"
         ];
         const fishes = [
             "Salmon", "Tuna", "Trout", "Cod", "Herring", "Sardine", "Mackerel", "Swordfish", "Halibut", "Bass", 
             "Pike", "Catfish", "Perch", "Shark", "Anchovy", "Tilapia", "Eel", "Walleye", "Flounder", "Pollock", 
             "Clams", "Mussels", "Shrimp", "Crab", "Lobster", "Scallops", "Oysters", "Octopus", "Squid", "Caviar", 
-            "Sea bass", "Barracuda", "Snapper", "Mahi Mahi", "Sea trout"
+            "Sea bass", "Barracuda", "Snapper", "Mahi Mahi", "Sea trout", "Chilean sea bass", "Red snapper", 
+            "Scampi", "Mullet", "Tilapia", "Swordfish", "Kingfish", "Anchovy", "Pompano", "Langoustine", "Turbot",
+            "Arctic char", "Amberjack", "Flounder", "Seabream", "John Dory"
         ];
         const plants = [
             "Carrot", "Potato", "Spinach", "Tomato", "Broccoli", "Cabbage", "Lettuce", "Cauliflower", "Onion", 
             "Garlic", "Peppers", "Zucchini", "Squash", "Pumpkin", "Eggplant", "Beets", "Asparagus", "Radish", 
             "Artichoke", "Kale", "Brussels sprouts", "Chard", "Sweet potato", "Cucumber", "Green beans", "Celery", 
-            "Leeks", "Parsnips", "Mushrooms", "Fennel", "Turnips", "Olives", "Chili peppers", "Okra", "Taro root"
+            "Leeks", "Parsnips", "Mushrooms", "Fennel", "Turnips", "Olives", "Chili peppers", "Okra", "Taro root", 
+            "Nori", "Algae", "Bamboo shoots", "Rhubarb", "Watercress", "Sorrel", "Collard greens", "Chili flakes",
+            "Dandelion greens", "Moringa", "Chives", "Bok choy", "Mustard greens", "Radicchio", "Seaweed", "Tarragon", 
+            "Oregano", "Coriander", "Thyme"
         ];
         const fruits = [
             "Apple", "Banana", "Strawberry", "Orange", "Grapes", "Mango", "Pineapple", "Peach", "Plum", "Kiwi", 
             "Cherry", "Blueberry", "Raspberry", "Blackberry", "Papaya", "Watermelon", "Cantaloupe", "Lemon", "Lime", 
             "Grapefruit", "Pear", "Pomegranate", "Fig", "Apricot", "Dragonfruit", "Passionfruit", "Lychee", 
-            "Tangerine", "Starfruit", "Guava", "Coconut", "Durian", "Jackfruit", "Persimmon", "Mulberry"
+            "Tangerine", "Starfruit", "Guava", "Coconut", "Durian", "Jackfruit", "Persimmon", "Mulberry", "Clementine", 
+            "Figs", "Persimmons", "Nectarine", "Soursop", "Blood orange", "Cherimoya", "Acai berry", "Goji berry",
+            "Elderberry", "Pineberry", "Tamarillo", "Quince", "Jabuticaba", "Longan", "Salak", "Breadfruit"
         ];
         const veggies = [
             "Corn", "Beets", "Lettuce", "Celery", "Carrot", "Peas", "Potatoes", "Brussels sprouts", "Sweet corn", 
             "Bell pepper", "Tomatoes", "Asparagus", "Cabbage", "Cauliflower", "Cucumber", "Spinach", "Zucchini", 
             "Leeks", "Kale", "Chard", "Radishes", "Arugula", "Rutabaga", "Turnip", "Okra", "Chili pepper", 
-            "Fennel", "Onion", "Garlic", "Shallots", "Chives", "Watercress", "Endive", "Bok choy", "Mustard greens"
+            "Fennel", "Onion", "Garlic", "Shallots", "Chives", "Watercress", "Endive", "Bok choy", "Mustard greens",
+            "Edamame", "Chayote", "Kohlrabi", "Napa cabbage", "Shiitake mushrooms", "Daikon", "Sunchokes", "Yucca",
+            "Mache", "Wheatgrass", "Sweet peas", "Mizuna", "Taro", "Lotus root", "Fiddlehead ferns", "Bamboo shoots", 
+            "Chili flakes"
         ];
 
-        const descriptions = [
-            "A hearty and delicious dish.",
-            "A unique blend of flavors.",
-            "A fresh, healthy choice.",
-            "A comfort food favorite.",
-            "A spicy and bold combination.",
-            "A light and refreshing dish."
-        ];
-
+        // Price for each ingredient (example)
         const pricesPerIngredient = {
-            "Beef": 15, "Chicken": 10, "Pork": 12, "Lamb": 18, "Venison": 25, "Rabbit": 20, "Goat": 22, "Duck": 30, 
-            "Bison": 35, "Kangaroo": 28, "Salmon": 20, "Tuna": 22, "Trout": 18, "Cod": 15, "Herring": 10, "Sardine": 8, 
-            "Mackerel": 15, "Swordfish": 25, "Halibut": 22, "Bass": 18, "Carrot": 2, "Potato": 3, "Spinach": 4, 
-            "Tomato": 5, "Broccoli": 6, "Cabbage": 4, "Lettuce": 3, "Cauliflower": 5, "Onion": 2, "Garlic": 1, 
-            "Apple": 4, "Banana": 3, "Strawberry": 6, "Orange": 5, "Grapes": 7, "Mango": 8, "Pineapple": 10, "Peach": 6,
-            "Corn": 4, "Beets": 3, "Lettuce": 3, "Celery": 2, "Carrot": 2, "Peas": 3, "Potatoes": 3, "Brussels sprouts": 5,
-            "Bell pepper": 4, "Tomatoes": 3
+            "Beef": 5, "Chicken": 4, "Pork": 3, "Lamb": 6, "Venison": 8, "Rabbit": 7, "Goat": 5, "Duck": 6, 
+            "Bison": 7, "Kangaroo": 9, "Turkey": 4, "Boar": 8, "Elk": 10, "Emu": 7, "Ostrich": 8, "Quail": 6, 
+            "Pheasant": 6, "Goose": 7, "Sausage": 3, "Pastrami": 5, "Salami": 4, "Pepperoni": 3, "Jerky": 6,
+            "Salmon": 7, "Tuna": 6, "Trout": 5, "Cod": 4, "Herring": 3, "Sardine": 2, "Mackerel": 5, "Swordfish": 8,
+            "Halibut": 7, "Bass": 5, "Pike": 5, "Catfish": 4, "Perch": 4, "Shark": 10, "Anchovy": 3, "Tilapia": 4, 
+            "Eel": 6, "Walleye": 6, "Flounder": 5, "Pollock": 4, "Clams": 5, "Mussels": 4, "Shrimp": 6, "Crab": 7,
+            "Lobster": 9, "Scallops": 8, "Oysters": 7, "Octopus": 9, "Squid": 5, "Caviar": 10, "Sea bass": 7, 
+            "Barracuda": 8, "Snapper": 7, "Mahi Mahi": 7, "Sea trout": 6, "Chilean sea bass": 10, "Red snapper": 6,
+            "Carrot": 1, "Potato": 1, "Spinach": 2, "Tomato": 2, "Broccoli": 3, "Cabbage": 2, "Lettuce": 1, 
+            "Cauliflower": 3, "Onion": 1, "Garlic": 2, "Peppers": 3, "Zucchini": 2, "Squash": 2, "Pumpkin": 3, 
+            "Eggplant": 2, "Beets": 2, "Asparagus": 4, "Radish": 2, "Artichoke": 5, "Kale": 3, "Brussels sprouts": 5,
+            "Chard": 3, "Sweet potato": 2, "Cucumber": 2, "Green beans": 3, "Celery": 1, "Leeks": 3, "Parsnips": 3, 
+            "Mushrooms": 4, "Fennel": 3, "Turnips": 2, "Olives": 3, "Chili peppers": 2, "Okra": 4, "Taro root": 5, 
+            "Nori": 2, "Algae": 3, "Bamboo shoots": 2, "Rhubarb": 3, "Watercress": 4, "Sorrel": 3, "Collard greens": 3,
+            "Chives": 2, "Bok choy": 3, "Mustard greens": 3, "Radicchio": 3, "Seaweed": 3, "Tarragon": 2, "Oregano": 2,
+            "Coriander": 2, "Thyme": 2, "Apple": 2, "Banana": 1, "Strawberry": 3, "Orange": 2, "Grapes": 3, "Mango": 4,
+            "Pineapple": 3, "Peach": 3, "Plum": 2, "Kiwi": 3, "Cherry": 4, "Blueberry": 3, "Raspberry": 3, 
+            "Blackberry": 3, "Papaya": 5, "Watermelon": 3, "Cantaloupe": 3, "Lemon": 2, "Lime": 2, "Grapefruit": 3,
+            "Pear": 2, "Pomegranate": 4, "Fig": 4, "Apricot": 3, "Dragonfruit": 6, "Passionfruit": 5, "Lychee": 5,
+            "Tangerine": 2, "Starfruit": 4, "Guava": 4, "Coconut": 5, "Durian": 7, "Jackfruit": 6, "Persimmon": 5,
+            "Mulberry": 4, "Clementine": 2, "Figs": 4, "Persimmons": 5, "Nectarine": 3, "Soursop": 5, "Blood orange": 3,
+            "Cherimoya": 6, "Acai berry": 7, "Goji berry": 4, "Elderberry": 4, "Pineberry": 6, "Tamarillo": 4,
+            "Quince": 3, "Jabuticaba": 5, "Longan": 5, "Salak": 5, "Breadfruit": 5
         };
 
         // Add ingredients to their respective sections
@@ -208,4 +229,3 @@
 
 </body>
 </html>
-
