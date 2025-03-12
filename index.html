@@ -10,9 +10,16 @@
             margin: 0;
             overflow: hidden;
             background-color: #87CEEB;
+            font-family: Arial, sans-serif;
+            color: white;
         }
-        canvas {
-            display: block;
+        .button-container {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
         }
         .button {
             font-size: 20px;
@@ -27,68 +34,72 @@
         .button:hover {
             background-color: #0056b3;
         }
+        #status {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <div style="position: absolute; top: 10px; left: 10px; font-size: 24px; color: white;">
+    <div id="status">
         <h2>Farm to Table Quest 🌾🍽️</h2>
         <p>Click below to grow, harvest, and cook your crops! 👩‍🌾👨‍🍳</p>
     </div>
-    <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);">
+    <div class="button-container">
         <button class="button" id="plantBtn">🌱 Plant Crop</button>
         <button class="button" id="harvestBtn" disabled>🌾 Harvest Crop</button>
         <button class="button" id="cookBtn" disabled>🍳 Cook Dish</button>
     </div>
 
     <script>
-        document.getElementById("plantBtn").addEventListener("click", function() {
-            plantCrop();
-        });
-
-        document.getElementById("harvestBtn").addEventListener("click", function() {
-            harvestCrop();
-        });
-
-        document.getElementById("cookBtn").addEventListener("click", function() {
-            cookDish();
-        });
-
+        // State variables to track the game progress
         let cropPlanted = false;
         let cropHarvested = false;
         let dishCooked = false;
 
-        function plantCrop() {
+        // DOM elements for buttons
+        const plantButton = document.getElementById("plantBtn");
+        const harvestButton = document.getElementById("harvestBtn");
+        const cookButton = document.getElementById("cookBtn");
+
+        // Function to handle planting a crop
+        plantButton.addEventListener("click", function() {
             if (!cropPlanted) {
                 cropPlanted = true;
-                document.getElementById("plantBtn").disabled = true;
-                document.getElementById("harvestBtn").disabled = false;
                 document.body.style.backgroundColor = "#F0E68C";  // Change background to show planting activity
-                alert("🌱 You have planted a crop! Wait for it to grow.");
+                document.getElementById("status").innerHTML = "<h2>🌱 Crop planted! Wait for it to grow.</h2>";
+                plantButton.disabled = true;
+                harvestButton.disabled = false;
             }
-        }
+        });
 
-        function harvestCrop() {
+        // Function to handle harvesting the crop
+        harvestButton.addEventListener("click", function() {
             if (cropPlanted && !cropHarvested) {
                 cropHarvested = true;
-                document.getElementById("harvestBtn").disabled = true;
-                document.getElementById("cookBtn").disabled = false;
                 document.body.style.backgroundColor = "#98FB98";  // Change background to show harvest activity
-                alert("🌾 Crop harvested! You can now cook your dish.");
+                document.getElementById("status").innerHTML = "<h2>🌾 Crop harvested! Time to cook.</h2>";
+                harvestButton.disabled = true;
+                cookButton.disabled = false;
             } else if (!cropPlanted) {
-                alert("❗ You need to plant a crop first!");
+                document.getElementById("status").innerHTML = "<h2>❗ You need to plant a crop first!</h2>";
             }
-        }
+        });
 
-        function cookDish() {
+        // Function to handle cooking the dish
+        cookButton.addEventListener("click", function() {
             if (cropHarvested && !dishCooked) {
                 dishCooked = true;
-                document.getElementById("cookBtn").disabled = true;
                 document.body.style.backgroundColor = "#FFD700";  // Change background to show cooking activity
-                alert("🍳 Dish is cooked and ready to serve! Enjoy your meal! 🍽️");
+                document.getElementById("status").innerHTML = "<h2>🍳 Dish is cooked and ready to serve! Enjoy! 🍽️</h2>";
+                cookButton.disabled = true;
             } else if (!cropHarvested) {
-                alert("❗ You need to harvest the crop before cooking!");
+                document.getElementById("status").innerHTML = "<h2>❗ You need to harvest the crop before cooking!</h2>";
             }
-        }
+        });
     </script>
 </body>
 </html>
