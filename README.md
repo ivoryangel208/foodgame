@@ -30,6 +30,13 @@
             margin: 10px 0;
             border-radius: 5px;
         }
+        .ingredient-list {
+            margin: 10px 0;
+        }
+        .ingredient-list label {
+            display: block;
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -38,21 +45,27 @@
     <label for="dish-name">Dish Name:</label>
     <input type="text" id="dish-name" placeholder="Enter dish name" />
     <button id="create-dish">Create Dish</button>
-    <button id="view-inventory">View Inventory</button>
-
-    <div id="ingredient-section">
-        <button id="add-meat">Add Meat</button>
-        <button id="add-fish">Add Fish</button>
-        <button id="add-plant">Add Plant</button>
-        <button id="add-fruit">Add Fruit</button>
-        <button id="add-veg">Add Veggie</button>
+    
+    <h3>Choose Ingredients for Your Dish</h3>
+    <div id="meat-section" class="ingredient-list">
+        <h4>Meats:</h4>
     </div>
+    <div id="fish-section" class="ingredient-list">
+        <h4>Fishes:</h4>
+    </div>
+    <div id="plant-section" class="ingredient-list">
+        <h4>Plants:</h4>
+    </div>
+    <div id="fruit-section" class="ingredient-list">
+        <h4>Fruits:</h4>
+    </div>
+    <div id="veg-section" class="ingredient-list">
+        <h4>Veggies:</h4>
+    </div>
+
+    <button id="view-dish">View Dish</button>
 
     <div id="dish-list" class="dish-list"></div>
-    <div id="inventory" style="display: none;">
-        <h3>Inventory</h3>
-        <div id="inventory-list"></div>
-    </div>
 
     <script>
         // Define ingredients
@@ -79,20 +92,28 @@
             "Corn": 4, "Beets": 3, "Lettuce": 3, "Celery": 2, "Carrot": 2, "Peas": 3, "Potatoes": 3, "Brussels sprouts": 5, "Sweet corn": 4, "Bell pepper": 4
         };
 
-        let inventory = [];
         let currentDish = null;
 
         const dishNameInput = document.getElementById('dish-name');
         const createDishButton = document.getElementById('create-dish');
-        const viewInventoryButton = document.getElementById('view-inventory');
-        const addMeatButton = document.getElementById('add-meat');
-        const addFishButton = document.getElementById('add-fish');
-        const addPlantButton = document.getElementById('add-plant');
-        const addFruitButton = document.getElementById('add-fruit');
-        const addVegButton = document.getElementById('add-veg');
         const dishList = document.getElementById('dish-list');
-        const inventoryList = document.getElementById('inventory-list');
-        const inventorySection = document.getElementById('inventory');
+
+        // Dynamically add ingredient options to the page
+        function createIngredientOptions(ingredients, sectionId) {
+            const section = document.getElementById(sectionId);
+            ingredients.forEach(ingredient => {
+                const label = document.createElement('label');
+                label.innerHTML = `<input type="checkbox" class="ingredient" data-ingredient="${ingredient}"> ${ingredient}`;
+                section.appendChild(label);
+            });
+        }
+
+        // Call the function to create the ingredient options
+        createIngredientOptions(meats, 'meat-section');
+        createIngredientOptions(fishes, 'fish-section');
+        createIngredientOptions(plants, 'plant-section');
+        createIngredientOptions(fruits, 'fruit-section');
+        createIngredientOptions(veggies, 'veg-section');
 
         // Create Dish
         createDishButton.addEventListener('click', function () {
@@ -116,46 +137,25 @@
             dishNameInput.value = "";
         });
 
-        // Add ingredients to current dish
-        addMeatButton.addEventListener('click', function () {
-            addIngredient(meats, "meat");
-        });
-
-        addFishButton.addEventListener('click', function () {
-            addIngredient(fishes, "fish");
-        });
-
-        addPlantButton.addEventListener('click', function () {
-            addIngredient(plants, "plant");
-        });
-
-        addFruitButton.addEventListener('click', function () {
-            addIngredient(fruits, "fruit");
-        });
-
-        addVegButton.addEventListener('click', function () {
-            addIngredient(veggies, "veg");
-        });
-
-        function addIngredient(ingredientArray, type) {
+        // View Dish
+        document.getElementById('view-dish').addEventListener('click', function () {
+            // Get selected ingredients
+            const selectedIngredients = document.querySelectorAll('.ingredient:checked');
             if (!currentDish) {
                 alert("Please create a dish first.");
                 return;
             }
-            const randomIngredient = ingredientArray[Math.floor(Math.random() * ingredientArray.length)];
-            currentDish.ingredients.push(randomIngredient);
-            updateDishPrice();
-            updateDishDisplay();
-        }
 
-        // Update dish price based on ingredients
-        function updateDishPrice() {
-            currentDish.price = currentDish.ingredients.reduce((total, ingredient) => total + (pricesPerIngredient[ingredient] || 0), 0);
-        }
+            currentDish.ingredients = Array.from(selectedIngredients).map(input => input.getAttribute('data-ingredient'));
+            currentDish.price = currentDish.ingredients.reduce((total, ingredient) => total + pricesPerIngredient[ingredient], 0);
+
+            updateDishDisplay();
+        });
 
         // Update the dish display
         function updateDishDisplay() {
             if (!currentDish) return;
+
             const dishDiv = document.createElement('div');
             dishDiv.className = "dish";
             dishDiv.innerHTML = `<strong>${currentDish.name}</strong><br>
@@ -167,14 +167,6 @@
             dishList.innerHTML = '';
             dishList.appendChild(dishDiv);
         }
-
-        // View Inventory
-        viewInventoryButton.addEventListener('click', function () {
-            inventorySection.style.display = inventorySection.style.display === "none" ? "block" : "none";
-            inventoryList.innerHTML = inventory.join('<br>');
-        });
     </script>
-
 </body>
 </html>
-
